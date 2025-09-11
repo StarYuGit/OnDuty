@@ -36,6 +36,7 @@
             tb_InputPerson = new TextBox();
             lb_CounterName = new Label();
             tb_CounterName = new TextBox();
+            label1 = new Label();
             SuspendLayout();
             // 
             // lb_InputHoliDay
@@ -62,6 +63,7 @@
             btn_InputHoliDay.TabIndex = 2;
             btn_InputHoliDay.Text = "匯入";
             btn_InputHoliDay.UseVisualStyleBackColor = true;
+            btn_InputHoliDay.Click += btn_InputHoliDay_Click;
             // 
             // lb_InputPerson
             // 
@@ -93,7 +95,7 @@
             lb_CounterName.AutoSize = true;
             lb_CounterName.Location = new Point(27, 112);
             lb_CounterName.Name = "lb_CounterName";
-            lb_CounterName.Size = new Size(42, 15);
+            lb_CounterName.Size = new Size(67, 15);
             lb_CounterName.TabIndex = 6;
             lb_CounterName.Text = "櫃台人員：";
             // 
@@ -104,11 +106,21 @@
             tb_CounterName.Size = new Size(100, 23);
             tb_CounterName.TabIndex = 7;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(27, 150);
+            label1.Name = "label1";
+            label1.Size = new Size(42, 15);
+            label1.TabIndex = 8;
+            label1.Text = "label1";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(label1);
             Controls.Add(tb_CounterName);
             Controls.Add(lb_CounterName);
             Controls.Add(tb_InputPerson);
@@ -134,5 +146,6 @@
         private TextBox tb_InputPerson;
         private Label lb_CounterName;
         private TextBox tb_CounterName;
+        private Label label1;
     }
 }
