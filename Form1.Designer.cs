@@ -40,7 +40,7 @@
             tabDates = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
-            tabDates.SuspendLayout();
+            selectHolidayFile = new Button();
             SuspendLayout();
             // 
             // lb_InputHoliDay
@@ -61,7 +61,7 @@
             // 
             // btn_InputHoliDay
             // 
-            btn_InputHoliDay.Location = new Point(378, 9);
+            btn_InputHoliDay.Location = new Point(451, 9);
             btn_InputHoliDay.Name = "btn_InputHoliDay";
             btn_InputHoliDay.Size = new Size(75, 23);
             btn_InputHoliDay.TabIndex = 2;
@@ -80,7 +80,7 @@
             // 
             // btn_InputPerson
             // 
-            btn_InputPerson.Location = new Point(378, 58);
+            btn_InputPerson.Location = new Point(451, 57);
             btn_InputPerson.Name = "btn_InputPerson";
             btn_InputPerson.Size = new Size(75, 23);
             btn_InputPerson.TabIndex = 4;
@@ -119,7 +119,7 @@
             label1.TabIndex = 8;
             label1.Text = "label1";
             // 
-            // tabControl1
+            // tabDates
             // 
             tabDates.Location = new Point(27, 138);
             tabDates.Name = "tabDates";
@@ -147,11 +147,21 @@
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            selectHolidayFile.Location = new Point(370, 9);
+            selectHolidayFile.Name = "button1";
+            selectHolidayFile.Size = new Size(75, 23);
+            selectHolidayFile.TabIndex = 10;
+            selectHolidayFile.Text = "button1";
+            selectHolidayFile.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(selectHolidayFile);
             Controls.Add(tabDates);
             Controls.Add(label1);
             Controls.Add(tb_CounterName);
@@ -165,7 +175,6 @@
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
-            tabDates.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -184,5 +193,6 @@
         private TabControl tabDates;
         private TabPage tabPage1;
         private TabPage tabPage2;
+        private Button selectHolidayFile;
     }
 }
