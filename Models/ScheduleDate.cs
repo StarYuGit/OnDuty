@@ -9,7 +9,7 @@ namespace OnDuty.Models
     public class ScheduleDate
     {
         public ScheduleDate() {}
-        public ScheduleDate(int fullDate, string year, string month, string day, string week, int dayType, string remark)
+        public ScheduleDate(int fullDate, string year, string month, string day, string week, string dayType, string remark)
         {
             this.fullDate = fullDate;
             this.year = year;

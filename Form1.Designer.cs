@@ -37,6 +37,10 @@
             lb_CounterName = new Label();
             tb_CounterName = new TextBox();
             label1 = new Label();
+            tabDates = new TabControl();
+            tabPage1 = new TabPage();
+            tabPage2 = new TabPage();
+            tabDates.SuspendLayout();
             SuspendLayout();
             // 
             // lb_InputHoliDay
@@ -109,17 +113,46 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(27, 150);
+            label1.Location = new Point(302, 117);
             label1.Name = "label1";
             label1.Size = new Size(42, 15);
             label1.TabIndex = 8;
             label1.Text = "label1";
+            // 
+            // tabControl1
+            // 
+            tabDates.Location = new Point(27, 138);
+            tabDates.Name = "tabDates";
+            tabDates.SelectedIndex = 0;
+            tabDates.Size = new Size(512, 300);
+            tabDates.TabIndex = 9;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(504, 272);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(504, 272);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(tabDates);
             Controls.Add(label1);
             Controls.Add(tb_CounterName);
             Controls.Add(lb_CounterName);
@@ -132,6 +165,7 @@
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
+            tabDates.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -147,5 +181,8 @@
         private Label lb_CounterName;
         private TextBox tb_CounterName;
         private Label label1;
+        private TabControl tabDates;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
     }
 }

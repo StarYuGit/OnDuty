@@ -21,29 +21,49 @@ namespace OnDuty
             //{
             //    if (openFileDialog.ShowDialog() == DialogResult.OK)
             //    {
-                    //tb_InputHoliDay.Text = openFileDialog.FileName;
-                    tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
+            //tb_InputHoliDay.Text = openFileDialog.FileName;
+            tb_InputHoliDay.Text = "C:\\project\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
 
-                    string holidayFile = tb_InputHoliDay.Text;
-                    label1.Text = "";
-                    using (StreamReader holiday = new StreamReader(holidayFile))
+            string holidayFile = tb_InputHoliDay.Text;
+            label1.Text = "";
+            using (StreamReader holiday = new StreamReader(holidayFile))
+            {
+                List<ScheduleDate> scheduleDates = [];
+
+                string? line;
+                bool isWorkDayData = false;
+                int fullDate = 0;
+                while ((line = holiday.ReadLine()) != null)
+                {
+                    if (isWorkDayData)
                     {
-                        List<ScheduleDate> scheduleDates = [];
-                        string? line;
-                        bool isWorkDayData = false;
-                        while ((line = holiday.ReadLine()) != null)
+                        fullDate = 0;
+                        string year = "", month = "", day = "";
+                        string[] dArray = line.Split(',');
+                        if (int.TryParse(dArray[0], out fullDate))
                         {
-                            if (isWorkDayData)
-                            {
-                                label1.Text += line + Environment.NewLine;
-                                List<string> everyDay = line.Split(',').ToList();
-                            }
-                            if ("西元日期,星期,是否放假,備註".Equals(line))
-                                isWorkDayData = true;
+                            ScheduleDate scheduleDate = 
+                                new ScheduleDate(fullDate,
+                                                 dArray[0].Substring(0, 4),
+                                                    dArray[0].Substring(4, 2),
+                                                    dArray[0].Substring(6, 2),
+                                                    dArray[1],
+                                                    dArray[2],
+                                                    !string.IsNullOrEmpty(dArray[3]) ? dArray[3] : null
+                                                 );
+                            scheduleDates.Add(scheduleDate);
                         }
                     }
+                    if ("西元日期,星期,是否放假,備註".Equals(line))
+                        isWorkDayData = true;
+                }
+            }
             //    }
             //}
+        }
+        private void CreateTabFromDataList(List<ScheduleDate> scheduleDates)
+        {
+
         }
     }
 }
