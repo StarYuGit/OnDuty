@@ -23,11 +23,7 @@ namespace OnDuty
         }
         private void GetAllDateFromCSVFIle()
         {
-            //using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            //{
-            //    if (openFileDialog.ShowDialog() == DialogResult.OK)
-            //    {
-            //tb_InputHoliDay.Text = openFileDialog.FileName;
+
             tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
 
             string holidayFile = tb_InputHoliDay.Text;
@@ -63,15 +59,24 @@ namespace OnDuty
                         isWorkDayData = true;
                 }
             }
-            //    }
-            //}
-            scheduleDates =  models;
+            scheduleDates = models;
         }
         private void CreateTabFromDataList()
         {
             if (scheduleDates?.Any() is true)
             {
 
+            }
+        }
+
+        private void btn_InputHoliDayFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    tb_InputHoliDay.Text = openFileDialog.FileName;
+                }
             }
         }
     }
