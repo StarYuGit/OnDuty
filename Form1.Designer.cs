@@ -44,7 +44,7 @@
             btn_InputPersonFile = new Button();
             SuspendLayout();
             // 
-            // lb_InputHoliDay
+            // 匯入假期標題
             // 
             lb_InputHoliDay.AutoSize = true;
             lb_InputHoliDay.Location = new Point(27, 12);
@@ -53,14 +53,14 @@
             lb_InputHoliDay.TabIndex = 0;
             lb_InputHoliDay.Text = "匯入行事例csv檔：";
             // 
-            // tb_InputHoliDay
+            // 匯入假期文字框
             // 
             tb_InputHoliDay.Location = new Point(141, 9);
             tb_InputHoliDay.Name = "tb_InputHoliDay";
             tb_InputHoliDay.Size = new Size(220, 23);
             tb_InputHoliDay.TabIndex = 1;
             // 
-            // btn_InputHoliDay
+            // 選擇假期按鈕
             // 
             btn_InputHoliDay.Location = new Point(451, 9);
             btn_InputHoliDay.Name = "btn_InputHoliDay";
@@ -70,7 +70,7 @@
             btn_InputHoliDay.UseVisualStyleBackColor = true;
             btn_InputHoliDay.Click += btn_InputHoliDay_Click;
             // 
-            // lb_InputPerson
+            // 匯入排班人員名單標題
             // 
             lb_InputPerson.AutoSize = true;
             lb_InputPerson.Location = new Point(27, 62);
@@ -79,7 +79,7 @@
             lb_InputPerson.TabIndex = 3;
             lb_InputPerson.Text = "匯入排班人名單：";
             // 
-            // btn_InputPerson
+            // 選擇排班人員名單按鈕
             // 
             btn_InputPerson.Location = new Point(451, 57);
             btn_InputPerson.Name = "btn_InputPerson";
@@ -88,14 +88,14 @@
             btn_InputPerson.Text = "匯入";
             btn_InputPerson.UseVisualStyleBackColor = true;
             // 
-            // tb_InputPerson
+            // 匯入排班人員名單文字框
             // 
             tb_InputPerson.Location = new Point(141, 58);
             tb_InputPerson.Name = "tb_InputPerson";
             tb_InputPerson.Size = new Size(220, 23);
             tb_InputPerson.TabIndex = 5;
             // 
-            // lb_CounterName
+            // 櫃台人員標題
             // 
             lb_CounterName.AutoSize = true;
             lb_CounterName.Location = new Point(27, 112);
@@ -104,7 +104,7 @@
             lb_CounterName.TabIndex = 6;
             lb_CounterName.Text = "櫃台人員：";
             // 
-            // tb_CounterName
+            // 櫃台人員文字框
             // 
             tb_CounterName.Location = new Point(141, 109);
             tb_CounterName.Name = "tb_CounterName";
@@ -120,7 +120,7 @@
             label1.TabIndex = 8;
             label1.Text = "label1";
             // 
-            // tabDates
+            // 行事曆TabControl
             // 
             tabDates.Location = new Point(27, 138);
             tabDates.Name = "tabDates";
@@ -148,7 +148,7 @@
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // btn_InputHoliDayFile
+            // 匯入假期檔案按鈕
             // 
             btn_InputHoliDayFile.Location = new Point(370, 9);
             btn_InputHoliDayFile.Name = "btn_InputHoliDayFile";
@@ -158,7 +158,7 @@
             btn_InputHoliDayFile.UseVisualStyleBackColor = true;
             btn_InputHoliDayFile.Click += btn_InputHoliDayFile_Click;
             // 
-            // btn_InputPersonFile
+            // 匯入排班人員名單檔案按鈕
             // 
             btn_InputPersonFile.Location = new Point(370, 58);
             btn_InputPersonFile.Name = "btn_InputPersonFile";
