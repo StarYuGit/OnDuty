@@ -1,10 +1,13 @@
 using OnDuty.Models;
+using System.Net;
+using System.Runtime.Serialization.Json;
 
 namespace OnDuty
 {
     public partial class Form1 : Form
     {
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
+        Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         public Form1()
         {
             InitializeComponent();
@@ -19,6 +22,7 @@ namespace OnDuty
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
         {
             GetAllDateFromCSVFIle();
+            ImportData();
             CreateTabFromDataList();
         }
         private void GetAllDateFromCSVFIle()
@@ -61,11 +65,52 @@ namespace OnDuty
             }
             scheduleDates = models;
         }
-        private void CreateTabFromDataList()
+        private void ImportData()
         {
             if (scheduleDates?.Any() is true)
             {
+                dicMonthAndScheduleDates =
+                    scheduleDates.GroupBy(x => x.month ?? "")
+                                 .ToDictionary(x => x.Key, x => x.OrderBy(x => x.fullDate).ToList());
+            }
+        }
+        private void CreateTabFromDataList()
+        {
+            if (dicMonthAndScheduleDates.Count > 0)
+            {
+                foreach (string month in dicMonthAndScheduleDates.Keys.OrderBy(x => x))
+                {
+                    TabPage tabPage = new TabPage();
+                    tabPage.Text = month.TrimStart('0') + "月份";
+                    tabDates.Controls.Add(tabPage);
+                    List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
+                    ListView listView = new ListView
+                    {
+                        Dock = DockStyle.Fill,     // 讓 ListView 充滿整個 TabPage
+                        View = View.Details,       // 詳細資料模式
+                        FullRowSelect = true,
+                        GridLines = true
+                    };
+                    listView.Columns.Add("日期", 200);
+                    listView.Columns.Add("星期", 50);
+                    listView.Columns.Add("備註", 300);
+                    List<ListViewItem> listViewItems = new List<ListViewItem>();
 
+                    foreach (ScheduleDate item in scheduleDates)
+                    {
+                        string displayText = "";
+                        displayText += item.month + "月" + item.day + "日";
+                        ListViewItem lvi = new ListViewItem(displayText);
+                        lvi.SubItems.Add(item.week);
+                        lvi.SubItems.Add(item.remark);
+                        if (item.dayType == "2")
+                            lvi.ForeColor = Color.Red;
+                        
+                            listViewItems.Add(lvi);
+                    }
+                    listView.Items.AddRange(listViewItems.ToArray());
+                    tabPage.Controls.Add(listView);
+                }
             }
         }
 
