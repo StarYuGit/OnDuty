@@ -31,7 +31,7 @@ namespace OnDuty
             tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
 
             string holidayFile = tb_InputHoliDay.Text;
-            label1.Text = "";
+
             List<ScheduleDate> models = [];
             using (StreamReader holiday = new StreamReader(holidayFile))
             {
@@ -99,14 +99,14 @@ namespace OnDuty
                     foreach (ScheduleDate item in scheduleDates)
                     {
                         string displayText = "";
-                        displayText += item.month + "月" + item.day + "日";
+                        displayText += (item.month ?? "").TrimStart('0') + "月" + (item.day ?? "").TrimStart('0') + "日";
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
                         lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
-                        
-                            listViewItems.Add(lvi);
+
+                        listViewItems.Add(lvi);
                     }
                     listView.Items.AddRange(listViewItems.ToArray());
                     tabPage.Controls.Add(listView);

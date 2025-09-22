@@ -36,15 +36,18 @@
             tb_InputPerson = new TextBox();
             lb_CounterName = new Label();
             tb_CounterName = new TextBox();
-            label1 = new Label();
+            lb_SelectDate = new Label();
             tabDates = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             btn_InputHoliDayFile = new Button();
             btn_InputPersonFile = new Button();
+            lb_SelectPerson = new Label();
+            tb_SelectDateResult = new TextBox();
+            tb_SelectPersonResult = new TextBox();
             SuspendLayout();
             // 
-            // 匯入假期標題
+            // lb_InputHoliDay
             // 
             lb_InputHoliDay.AutoSize = true;
             lb_InputHoliDay.Location = new Point(27, 12);
@@ -53,14 +56,14 @@
             lb_InputHoliDay.TabIndex = 0;
             lb_InputHoliDay.Text = "匯入行事例csv檔：";
             // 
-            // 匯入假期文字框
+            // tb_InputHoliDay
             // 
             tb_InputHoliDay.Location = new Point(141, 9);
             tb_InputHoliDay.Name = "tb_InputHoliDay";
             tb_InputHoliDay.Size = new Size(220, 23);
             tb_InputHoliDay.TabIndex = 1;
             // 
-            // 選擇假期按鈕
+            // btn_InputHoliDay
             // 
             btn_InputHoliDay.Location = new Point(451, 9);
             btn_InputHoliDay.Name = "btn_InputHoliDay";
@@ -70,62 +73,62 @@
             btn_InputHoliDay.UseVisualStyleBackColor = true;
             btn_InputHoliDay.Click += btn_InputHoliDay_Click;
             // 
-            // 匯入排班人員名單標題
+            // lb_InputPerson
             // 
             lb_InputPerson.AutoSize = true;
-            lb_InputPerson.Location = new Point(27, 62);
+            lb_InputPerson.Location = new Point(27, 51);
             lb_InputPerson.Name = "lb_InputPerson";
             lb_InputPerson.Size = new Size(103, 15);
             lb_InputPerson.TabIndex = 3;
             lb_InputPerson.Text = "匯入排班人名單：";
             // 
-            // 選擇排班人員名單按鈕
+            // btn_InputPerson
             // 
-            btn_InputPerson.Location = new Point(451, 57);
+            btn_InputPerson.Location = new Point(451, 46);
             btn_InputPerson.Name = "btn_InputPerson";
             btn_InputPerson.Size = new Size(75, 23);
             btn_InputPerson.TabIndex = 4;
             btn_InputPerson.Text = "匯入";
             btn_InputPerson.UseVisualStyleBackColor = true;
             // 
-            // 匯入排班人員名單文字框
+            // tb_InputPerson
             // 
-            tb_InputPerson.Location = new Point(141, 58);
+            tb_InputPerson.Location = new Point(141, 47);
             tb_InputPerson.Name = "tb_InputPerson";
             tb_InputPerson.Size = new Size(220, 23);
             tb_InputPerson.TabIndex = 5;
             // 
-            // 櫃台人員標題
+            // lb_CounterName
             // 
             lb_CounterName.AutoSize = true;
-            lb_CounterName.Location = new Point(27, 112);
+            lb_CounterName.Location = new Point(27, 90);
             lb_CounterName.Name = "lb_CounterName";
             lb_CounterName.Size = new Size(67, 15);
             lb_CounterName.TabIndex = 6;
             lb_CounterName.Text = "櫃台人員：";
             // 
-            // 櫃台人員文字框
+            // tb_CounterName
             // 
-            tb_CounterName.Location = new Point(141, 109);
+            tb_CounterName.Location = new Point(141, 87);
             tb_CounterName.Name = "tb_CounterName";
             tb_CounterName.Size = new Size(100, 23);
             tb_CounterName.TabIndex = 7;
             // 
-            // label1
+            // lb_SelectDate
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(302, 117);
-            label1.Name = "label1";
-            label1.Size = new Size(42, 15);
-            label1.TabIndex = 8;
-            label1.Text = "label1";
+            lb_SelectDate.AutoSize = true;
+            lb_SelectDate.Location = new Point(27, 127);
+            lb_SelectDate.Name = "lb_SelectDate";
+            lb_SelectDate.Size = new Size(115, 15);
+            lb_SelectDate.TabIndex = 8;
+            lb_SelectDate.Text = "選擇排班起始日期：";
             // 
-            // 行事曆TabControl
+            // tabDates
             // 
-            tabDates.Location = new Point(27, 138);
+            tabDates.Location = new Point(27, 163);
             tabDates.Name = "tabDates";
             tabDates.SelectedIndex = 0;
-            tabDates.Size = new Size(512, 300);
+            tabDates.Size = new Size(584, 275);
             tabDates.TabIndex = 9;
             // 
             // tabPage1
@@ -148,7 +151,7 @@
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // 匯入假期檔案按鈕
+            // btn_InputHoliDayFile
             // 
             btn_InputHoliDayFile.Location = new Point(370, 9);
             btn_InputHoliDayFile.Name = "btn_InputHoliDayFile";
@@ -158,24 +161,50 @@
             btn_InputHoliDayFile.UseVisualStyleBackColor = true;
             btn_InputHoliDayFile.Click += btn_InputHoliDayFile_Click;
             // 
-            // 匯入排班人員名單檔案按鈕
+            // btn_InputPersonFile
             // 
-            btn_InputPersonFile.Location = new Point(370, 58);
+            btn_InputPersonFile.Location = new Point(370, 47);
             btn_InputPersonFile.Name = "btn_InputPersonFile";
             btn_InputPersonFile.Size = new Size(75, 23);
             btn_InputPersonFile.TabIndex = 11;
             btn_InputPersonFile.Text = "選擇檔案";
             btn_InputPersonFile.UseVisualStyleBackColor = true;
             // 
+            // lb_SelectPerson
+            // 
+            lb_SelectPerson.AutoSize = true;
+            lb_SelectPerson.Location = new Point(260, 129);
+            lb_SelectPerson.Name = "lb_SelectPerson";
+            lb_SelectPerson.Size = new Size(115, 15);
+            lb_SelectPerson.TabIndex = 12;
+            lb_SelectPerson.Text = "選擇排班起始人員：";
+            // 
+            // tb_SelectDateResult
+            // 
+            tb_SelectDateResult.Location = new Point(141, 124);
+            tb_SelectDateResult.Name = "tb_SelectDateResult";
+            tb_SelectDateResult.Size = new Size(100, 23);
+            tb_SelectDateResult.TabIndex = 13;
+            // 
+            // tb_SelectPersonResult
+            // 
+            tb_SelectPersonResult.Location = new Point(370, 124);
+            tb_SelectPersonResult.Name = "tb_SelectPersonResult";
+            tb_SelectPersonResult.Size = new Size(100, 23);
+            tb_SelectPersonResult.TabIndex = 14;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(tb_SelectPersonResult);
+            Controls.Add(tb_SelectDateResult);
+            Controls.Add(lb_SelectPerson);
             Controls.Add(btn_InputPersonFile);
             Controls.Add(btn_InputHoliDayFile);
             Controls.Add(tabDates);
-            Controls.Add(label1);
+            Controls.Add(lb_SelectDate);
             Controls.Add(tb_CounterName);
             Controls.Add(lb_CounterName);
             Controls.Add(tb_InputPerson);
@@ -201,11 +230,14 @@
         private TextBox tb_InputPerson;
         private Label lb_CounterName;
         private TextBox tb_CounterName;
-        private Label label1;
+        private Label lb_SelectDate;
         private TabControl tabDates;
         private TabPage tabPage1;
         private TabPage tabPage2;
         private Button btn_InputHoliDayFile;
         private Button btn_InputPersonFile;
+        private Label lb_SelectPerson;
+        private TextBox tb_SelectDateResult;
+        private TextBox tb_SelectPersonResult;
     }
 }
