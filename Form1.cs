@@ -33,37 +33,46 @@ namespace OnDuty
             string holidayFile = tb_InputHoliDay.Text;
 
             List<ScheduleDate> models = [];
-            using (StreamReader holiday = new StreamReader(holidayFile))
+            try
             {
-                string? line;
-                bool isWorkDayData = false;
-                int fullDate = 0;
-                while ((line = holiday.ReadLine()) != null)
+                using (StreamReader holiday = new StreamReader(holidayFile))
                 {
-                    if (isWorkDayData)
+                    string? line;
+                    bool isWorkDayData = false;
+                    int fullDate = 0;
+                    while ((line = holiday.ReadLine()) != null)
                     {
-                        fullDate = 0;
-                        string year = "", month = "", day = "";
-                        string[] dArray = line.Split(',');
-                        if (int.TryParse(dArray[0], out fullDate))
+                        if (isWorkDayData)
                         {
-                            ScheduleDate scheduleDate =
-                                new ScheduleDate(fullDate,
-                                                 dArray[0].Substring(0, 4),
-                                                    dArray[0].Substring(4, 2),
-                                                    dArray[0].Substring(6, 2),
-                                                    dArray[1],
-                                                    dArray[2],
-                                                    !string.IsNullOrEmpty(dArray[3]) ? dArray[3] : null
-                                                 );
-                            models.Add(scheduleDate);
+                            fullDate = 0;
+                            string year = "", month = "", day = "";
+                            string[] dArray = line.Split(',');
+                            if (int.TryParse(dArray[0], out fullDate))
+                            {
+                                ScheduleDate scheduleDate =
+                                    new ScheduleDate(fullDate,
+                                                     dArray[0].Substring(0, 4),
+                                                        dArray[0].Substring(4, 2),
+                                                        dArray[0].Substring(6, 2),
+                                                        dArray[1],
+                                                        dArray[2],
+                                                        !string.IsNullOrEmpty(dArray[3]) ? dArray[3] : null
+                                                     );
+                                models.Add(scheduleDate);
+                            }
                         }
+                        if ("西元日期,星期,是否放假,備註".Equals(line))
+                            isWorkDayData = true;
                     }
-                    if ("西元日期,星期,是否放假,備註".Equals(line))
-                        isWorkDayData = true;
                 }
+                scheduleDates = models;
             }
-            scheduleDates = models;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace);
+                throw;
+            }
+
         }
         private void ImportData()
         {
@@ -94,6 +103,7 @@ namespace OnDuty
                     listView.Columns.Add("日期", 200);
                     listView.Columns.Add("星期", 50);
                     listView.Columns.Add("備註", 300);
+                    listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
                     List<ListViewItem> listViewItems = new List<ListViewItem>();
 
                     foreach (ScheduleDate item in scheduleDates)
@@ -102,6 +112,7 @@ namespace OnDuty
                         displayText += (item.month ?? "").TrimStart('0') + "月" + (item.day ?? "").TrimStart('0') + "日";
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
+            
                         lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
@@ -111,6 +122,14 @@ namespace OnDuty
                     listView.Items.AddRange(listViewItems.ToArray());
                     tabPage.Controls.Add(listView);
                 }
+            }
+        }
+
+        private void listView_SelectedIndexChanged(ListView listView)
+        {
+            if (listView.SelectedItems.Count > 0)
+            {
+                tb_SelectDateResult.Text = listView.SelectedItems[0].Text;
             }
         }
 
