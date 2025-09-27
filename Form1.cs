@@ -7,6 +7,7 @@ namespace OnDuty
     public partial class Form1 : Form
     {
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
+        List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         public Form1()
         {
@@ -22,8 +23,34 @@ namespace OnDuty
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
         {
             GetAllDateFromCSVFIle();
-            ImportData();
+            ImportHolidayData();
             CreateTabFromDataList();
+        }
+        private void btn_InputPerson_Click(object sender, EventArgs e)
+        {
+            GetPersonDataFrom();
+            CreatePersonViewList();
+        }
+        private void GetPersonDataFrom()
+        {
+            tb_InputPerson.Text = "C:\\Projects\\OnDuty\\person.txt";
+            string personFile = tb_InputPerson.Text;
+            try
+            {
+                using (StreamReader person = new StreamReader(personFile))
+                {
+                    string? line = "";
+                    while ((line = person.ReadLine()) != null)
+                    {
+                        persons.Add(line);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace);
+                throw;
+            }
         }
         private void GetAllDateFromCSVFIle()
         {
@@ -45,7 +72,6 @@ namespace OnDuty
                         if (isWorkDayData)
                         {
                             fullDate = 0;
-                            string year = "", month = "", day = "";
                             string[] dArray = line.Split(',');
                             if (int.TryParse(dArray[0], out fullDate))
                             {
@@ -74,13 +100,27 @@ namespace OnDuty
             }
 
         }
-        private void ImportData()
+        private void ImportHolidayData()
         {
             if (scheduleDates?.Any() is true)
             {
                 dicMonthAndScheduleDates =
                     scheduleDates.GroupBy(x => x.month ?? "")
                                  .ToDictionary(x => x.Key, x => x.OrderBy(x => x.fullDate).ToList());
+            }
+        }
+        private void CreatePersonViewList()
+        {
+            if (persons?.Any() is true)
+            {
+                List<ListViewItem> lviPoersons = new List<ListViewItem>();
+                foreach (string person in persons)
+                {
+                    ListViewItem lvi = new ListViewItem(person);
+                    lviPoersons.Add(lvi);
+                   
+                }
+                lv_person.Items.AddRange(lviPoersons.ToArray());
             }
         }
         private void CreateTabFromDataList()
@@ -104,7 +144,7 @@ namespace OnDuty
                     listView.Columns.Add("星期", 50);
                     listView.Columns.Add("備註", 300);
                     listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
-                    List<ListViewItem> listViewItems = new List<ListViewItem>();
+                    List<ListViewItem> lvisHoliDay = new List<ListViewItem>();
 
                     foreach (ScheduleDate item in scheduleDates)
                     {
@@ -112,14 +152,14 @@ namespace OnDuty
                         displayText += (item.month ?? "").TrimStart('0') + "月" + (item.day ?? "").TrimStart('0') + "日";
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
-            
+
                         lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
 
-                        listViewItems.Add(lvi);
+                        lvisHoliDay.Add(lvi);
                     }
-                    listView.Items.AddRange(listViewItems.ToArray());
+                    listView.Items.AddRange(lvisHoliDay.ToArray());
                     tabPage.Controls.Add(listView);
                 }
             }
@@ -143,5 +183,7 @@ namespace OnDuty
                 }
             }
         }
+
+
     }
 }
