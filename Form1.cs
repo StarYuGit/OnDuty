@@ -140,7 +140,7 @@ namespace OnDuty
                         FullRowSelect = true,
                         GridLines = true
                     };
-                    listView.Columns.Add("日期", 200);
+                    listView.Columns.Add("日期", 70);
                     listView.Columns.Add("星期", 50);
                     listView.Columns.Add("備註", 300);
                     listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
