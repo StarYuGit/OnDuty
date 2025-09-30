@@ -212,22 +212,20 @@
             // 
             // lv_person
             // 
+            lv_person.FullRowSelect = true;
+            lv_person.GridLines = true;
             lv_person.Location = new Point(740, 328);
             lv_person.Name = "lv_person";
-            //lv_person.Dock = DockStyle.Fill;
-            lv_person.View = View.Details;
-            lv_person.FullRowSelect = true;
-            lv_person.Columns.Add("待排班人員", 300);
-            lv_person.GridLines = true;
-            lv_person.Size = new Size(312, 548);
+            lv_person.Size = new Size(451, 548);
             lv_person.TabIndex = 15;
             lv_person.UseCompatibleStateImageBehavior = false;
+            lv_person.View = View.Details;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(14F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1600, 900);
+            ClientSize = new Size(1220, 900);
             Controls.Add(lv_person);
             Controls.Add(tb_SelectPersonResult);
             Controls.Add(tb_SelectDateResult);

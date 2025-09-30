@@ -12,6 +12,7 @@ namespace OnDuty
         public Form1()
         {
             InitializeComponent();
+    
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -113,6 +114,9 @@ namespace OnDuty
         {
             if (persons?.Any() is true)
             {
+                lv_person.Columns.Add("©m¦W", 100);
+                lv_person.FullRowSelect = true;
+                lv_person.GridLines = true;
                 List<ListViewItem> lviPoersons = new List<ListViewItem>();
                 foreach (string person in persons)
                 {
@@ -121,8 +125,10 @@ namespace OnDuty
                    
                 }
                 lv_person.Items.AddRange(lviPoersons.ToArray());
+                lv_person.SelectedIndexChanged += (sender, e) => lv_person_SelectedIndexChanged(lv_person);
             }
         }
+
         private void CreateTabFromDataList()
         {
             if (dicMonthAndScheduleDates.Count > 0)
@@ -160,6 +166,7 @@ namespace OnDuty
                         lvisHoliDay.Add(lvi);
                     }
                     listView.Items.AddRange(lvisHoliDay.ToArray());
+                    listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     tabPage.Controls.Add(listView);
                 }
             }
@@ -172,7 +179,11 @@ namespace OnDuty
                 tb_SelectDateResult.Text = listView.SelectedItems[0].Text;
             }
         }
-
+        private void lv_person_SelectedIndexChanged(ListView lv_person)
+        {
+            if (lv_person.SelectedItems.Count > 0)
+                tb_SelectPersonResult.Text = lv_person.SelectedItems[0].Text;
+        }
         private void btn_InputHoliDayFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
