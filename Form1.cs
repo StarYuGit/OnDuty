@@ -12,7 +12,7 @@ namespace OnDuty
         public Form1()
         {
             InitializeComponent();
-    
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -122,7 +122,7 @@ namespace OnDuty
                 {
                     ListViewItem lvi = new ListViewItem(person);
                     lviPoersons.Add(lvi);
-                   
+
                 }
                 lv_person.Items.AddRange(lviPoersons.ToArray());
                 lv_person.SelectedIndexChanged += (sender, e) => lv_person_SelectedIndexChanged(lv_person);
@@ -195,6 +195,23 @@ namespace OnDuty
             }
         }
 
+        private void btn_Duty_Click(object sender, EventArgs e)
+        {
+            if (scheduleDates?.Any() is false)
+            {
+                MessageBox.Show("尚未匯入正確行事曆資料。");
+                return;
+            }    
+            if (persons?.Any() is false)
+            {
+                MessageBox.Show("尚未匯入排班人員資料。");
+                return;
+            }
+            createDuty(scheduleDates ?? [], persons ?? []);
+        }
+        private void createDuty(List<ScheduleDate> scheduleDates, List<string> persons)
+        {
 
+        }
     }
 }
