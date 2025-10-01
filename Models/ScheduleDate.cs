@@ -26,5 +26,6 @@ namespace OnDuty.Models
         public string? week { set; get; }
         public string? dayType { get; set; }
         public string? remark { set; get; } = null;
+        public string? person { get; set; }
     }
 }

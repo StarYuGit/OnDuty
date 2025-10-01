@@ -1,12 +1,11 @@
 using OnDuty.Models;
-using System.Net;
-using System.Runtime.Serialization.Json;
 
 namespace OnDuty
 {
     public partial class Form1 : Form
     {
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
+        private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
         List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         public Form1()
@@ -18,14 +17,17 @@ namespace OnDuty
         private void Form1_Load(object sender, EventArgs e)
         {
             string counterName = Properties.Settings.Default.counterName;
-            //tb_CounterName.Text = counterName;
+            tb_CounterName.Text = counterName;
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
         {
             GetAllDateFromCSVFIle();
-            ImportHolidayData();
-            CreateTabFromDataList();
+            if (chk_ShowHoliDay.Checked)
+                ImportHolidayData(scheduleDates);
+            else
+                ImportHolidayData(scheduleNoHoliDayDates);
+            CreateTabFromDataList(dicMonthAndScheduleDates);
         }
         private void btn_InputPerson_Click(object sender, EventArgs e)
         {
@@ -93,6 +95,7 @@ namespace OnDuty
                     }
                 }
                 scheduleDates = models;
+                scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
             }
             catch (Exception ex)
             {
@@ -101,7 +104,7 @@ namespace OnDuty
             }
 
         }
-        private void ImportHolidayData()
+        private void ImportHolidayData(List<ScheduleDate> scheduleDates)
         {
             if (scheduleDates?.Any() is true)
             {
@@ -129,8 +132,9 @@ namespace OnDuty
             }
         }
 
-        private void CreateTabFromDataList()
+        private void CreateTabFromDataList(Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates, bool isDuty = false)
         {
+            tabDates.TabPages.Clear();
             if (dicMonthAndScheduleDates.Count > 0)
             {
                 foreach (string month in dicMonthAndScheduleDates.Keys.OrderBy(x => x))
@@ -139,39 +143,56 @@ namespace OnDuty
                     tabPage.Text = month.TrimStart('0') + "月份";
                     tabDates.Controls.Add(tabPage);
                     List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
-                    ListView listView = new ListView
-                    {
-                        Dock = DockStyle.Fill,     // 讓 ListView 充滿整個 TabPage
-                        View = View.Details,       // 詳細資料模式
-                        FullRowSelect = true,
-                        GridLines = true
-                    };
-                    listView.Columns.Add("日期", 70);
-                    listView.Columns.Add("星期", 50);
-                    listView.Columns.Add("備註", 300);
-                    listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
+                    ListView listView = new();
+
                     List<ListViewItem> lvisHoliDay = new List<ListViewItem>();
 
                     foreach (ScheduleDate item in scheduleDates)
                     {
                         string displayText = "";
-                        displayText += (item.month ?? "").TrimStart('0') + "月" + (item.day ?? "").TrimStart('0') + "日";
+                        displayText += (item.year ?? "") + "/" + (item.month ?? "").TrimStart('0') + "/" + (item.day ?? "").TrimStart('0');
+
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
-
                         lvi.SubItems.Add(item.remark);
+                        if (isDuty)
+                            lvi.SubItems.Add(item.person);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
 
                         lvisHoliDay.Add(lvi);
                     }
                     listView.Items.AddRange(lvisHoliDay.ToArray());
-                    listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+
                     tabPage.Controls.Add(listView);
+                    InitListView(listView, isDuty);
                 }
             }
         }
+        //初始化ListView
+        private void InitListView(ListView listView, bool isDuty = false)
+        {
+            listView.Dock = DockStyle.Fill;     // 讓 ListView 充滿整個 TabPage
+            listView.View = View.Details;       // 詳細資料模式
+            listView.FullRowSelect = true;
+            listView.GridLines = true;
+            listView.Columns.Add("日期", 70, HorizontalAlignment.Center);
+            listView.Columns.Add("星期", 100, HorizontalAlignment.Center);
+            if (chk_ShowHoliDay.Checked)
+            {
+                listView.Columns.Add("備註", 300);
+                listView.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
 
+            if (isDuty)
+                listView.Columns.Add("值班人員", 100);
+            else
+                listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
+            listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
+            listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+
+        }
         private void listView_SelectedIndexChanged(ListView listView)
         {
             if (listView.SelectedItems.Count > 0)
@@ -201,16 +222,41 @@ namespace OnDuty
             {
                 MessageBox.Show("尚未匯入正確行事曆資料。");
                 return;
-            }    
+            }
             if (persons?.Any() is false)
             {
                 MessageBox.Show("尚未匯入排班人員資料。");
                 return;
             }
-            createDuty(scheduleDates ?? [], persons ?? []);
+            CreateDuty(scheduleDates ?? [], persons ?? []);
         }
-        private void createDuty(List<ScheduleDate> scheduleDates, List<string> persons)
+        private void CreateDuty(List<ScheduleDate> scheduleDates, List<string> persons)
         {
+            int i = 0;
+            bool isCounter = chk_CounterFirst.Checked;
+            foreach (ScheduleDate scheduleDate in scheduleDates)
+            {
+                if (i == persons.Count)
+                    i = 0;
+                if (scheduleDate.dayType == "0")
+                {
+                    if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
+                        scheduleDate.person = tb_CounterName.Text;
+                    else
+                    {
+                        scheduleDate.person = persons[i];
+                        i++;
+                    }
+                    isCounter = !isCounter;
+                }
+            }
+            CreateTabFromDataList(dicMonthAndScheduleDates, true);
+        }
+
+        private void chk_ShowHoliDay_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk_ShowHoliDay.Checked)
+
 
         }
     }
