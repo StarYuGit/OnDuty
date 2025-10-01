@@ -6,6 +6,7 @@ namespace OnDuty
     {
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
+        bool isDuty = false;
         List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         public Form1()
@@ -132,7 +133,7 @@ namespace OnDuty
             }
         }
 
-        private void CreateTabFromDataList(Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates, bool isDuty = false)
+        private void CreateTabFromDataList(Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates)
         {
             tabDates.TabPages.Clear();
             if (dicMonthAndScheduleDates.Count > 0)
@@ -166,12 +167,12 @@ namespace OnDuty
 
 
                     tabPage.Controls.Add(listView);
-                    InitListView(listView, isDuty);
+                    InitListView(listView);
                 }
             }
         }
         //初始化ListView
-        private void InitListView(ListView listView, bool isDuty = false)
+        private void InitListView(ListView listView)
         {
             listView.Dock = DockStyle.Fill;     // 讓 ListView 充滿整個 TabPage
             listView.View = View.Details;       // 詳細資料模式
@@ -228,7 +229,11 @@ namespace OnDuty
                 MessageBox.Show("尚未匯入排班人員資料。");
                 return;
             }
-            CreateDuty(scheduleDates ?? [], persons ?? []);
+            isDuty = true;
+            if (chk_ShowHoliDay.Checked)
+                CreateDuty(scheduleDates ?? [], persons ?? []);
+            else
+                CreateDuty(scheduleNoHoliDayDates ?? [], persons ?? []);
         }
         private void CreateDuty(List<ScheduleDate> scheduleDates, List<string> persons)
         {
@@ -236,8 +241,7 @@ namespace OnDuty
             bool isCounter = chk_CounterFirst.Checked;
             foreach (ScheduleDate scheduleDate in scheduleDates)
             {
-                if (i == persons.Count)
-                    i = 0;
+                if (i == persons.Count)                    i = 0;
                 if (scheduleDate.dayType == "0")
                 {
                     if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
@@ -250,14 +254,16 @@ namespace OnDuty
                     isCounter = !isCounter;
                 }
             }
-            CreateTabFromDataList(dicMonthAndScheduleDates, true);
+            CreateTabFromDataList(dicMonthAndScheduleDates);
         }
 
         private void chk_ShowHoliDay_CheckedChanged(object sender, EventArgs e)
         {
             if (chk_ShowHoliDay.Checked)
-
-
+                ImportHolidayData(scheduleDates);
+            else
+                ImportHolidayData(scheduleNoHoliDayDates);
+            CreateTabFromDataList(dicMonthAndScheduleDates);
         }
     }
 }
