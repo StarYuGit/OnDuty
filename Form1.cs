@@ -155,6 +155,7 @@ namespace OnDuty
 
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
+                        if (chk_ShowHoliDay.Checked)
                         lvi.SubItems.Add(item.remark);
                         if (isDuty)
                             lvi.SubItems.Add(item.person);
@@ -179,7 +180,9 @@ namespace OnDuty
             listView.FullRowSelect = true;
             listView.GridLines = true;
             listView.Columns.Add("日期", 70, HorizontalAlignment.Center);
+            listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             listView.Columns.Add("星期", 100, HorizontalAlignment.Center);
+            listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
             if (chk_ShowHoliDay.Checked)
             {
                 listView.Columns.Add("備註", 300);
@@ -190,8 +193,7 @@ namespace OnDuty
                 listView.Columns.Add("值班人員", 100);
             else
                 listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
-            listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+   
 
         }
         private void listView_SelectedIndexChanged(ListView listView)
