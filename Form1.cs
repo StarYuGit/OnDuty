@@ -6,9 +6,11 @@ namespace OnDuty
     {
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
+        private List<ScheduleDate> currentScheduleDates = new();
         bool isDuty = false;
         List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
+        string selectResult = "";
         public Form1()
         {
             InitializeComponent();
@@ -25,9 +27,9 @@ namespace OnDuty
         {
             GetAllDateFromCSVFIle();
             if (chk_ShowHoliDay.Checked)
-                ImportHolidayData(scheduleDates);
+                ImportHolidayData();
             else
-                ImportHolidayData(scheduleNoHoliDayDates);
+                ImportHolidayData();
             CreateTabFromDataList(dicMonthAndScheduleDates);
         }
         private void btn_InputPerson_Click(object sender, EventArgs e)
@@ -105,12 +107,12 @@ namespace OnDuty
             }
 
         }
-        private void ImportHolidayData(List<ScheduleDate> scheduleDates)
+        private void ImportHolidayData()
         {
-            if (scheduleDates?.Any() is true)
+            if (this.currentScheduleDates?.Any() is true)
             {
                 dicMonthAndScheduleDates =
-                    scheduleDates.GroupBy(x => x.month ?? "")
+                    this.currentScheduleDates.GroupBy(x => x.month ?? "")
                                  .ToDictionary(x => x.Key, x => x.OrderBy(x => x.fullDate).ToList());
             }
         }
@@ -154,9 +156,8 @@ namespace OnDuty
                         displayText += (item.year ?? "") + "/" + (item.month ?? "").TrimStart('0') + "/" + (item.day ?? "").TrimStart('0');
 
                         ListViewItem lvi = new ListViewItem(displayText);
-                        lvi.Tag = item.fullDate;
+                        lvi.Tag = item.fullDate + "," + item.dayType;
                         lvi.SubItems.Add(item.week);
-                        
                             
                         if (isDuty)
                             lvi.SubItems.Add(item.person);
@@ -185,26 +186,26 @@ namespace OnDuty
             listView.Columns.Add("日期", 70, HorizontalAlignment.Center);
             listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
             listView.Columns.Add("星期", 60, HorizontalAlignment.Center);
-            //listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
-
 
             if (isDuty)
-            {
                 listView.Columns.Add("值班人員", 120);
-            }
-            else
-                listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
-
             if (chk_ShowHoliDay.Checked)
-            {
                 listView.Columns.Add("備註", 300);
-                
-            }
+
+            listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
         }
         private void listView_SelectedIndexChanged(ListView listView)
         {
             if (listView.SelectedItems.Count > 0)
             {
+                string[] tagType = ((listView.SelectedItems[0].Tag ?? new()).ToString() ?? "").Split(",");
+                if ("2".Equals(tagType[1]))
+                {
+                    MessageBox.Show("排班起始日不可選擇假日。");
+                    tb_SelectDateResult.Text = "";
+                    return;
+                }
+                selectResult = tagType[0];
                 tb_SelectDateResult.Text = listView.SelectedItems[0].Text;
             }
         }
@@ -242,16 +243,17 @@ namespace OnDuty
                 scheduleDates = this.scheduleDates ?? [];
             else
                 scheduleDates = this.scheduleNoHoliDayDates ?? [];
-            if (!string.IsNullOrEmpty(tb_SelectDateResult.Text))
-                scheduleDates = scheduleDates.Where(x => x.fullDate >= Convert.ToInt32(tb_SelectDateResult.Text.Replace("/", ""))).ToList();
+            this.currentScheduleDates = scheduleDates;
+            if (!string.IsNullOrEmpty(selectResult))
+                this.currentScheduleDates = this.currentScheduleDates.Where(x => x.fullDate >= Convert.ToInt32(selectResult)).ToList();
                    
-            CreateDuty(scheduleDates, persons ?? []);
+            CreateDuty(persons ?? []);
         }
-        private void CreateDuty(List<ScheduleDate> scheduleDates, List<string> persons)
+        private void CreateDuty(List<string> persons)
         {
             int i = 0;
             bool isCounter = chk_CounterFirst.Checked;
-            foreach (ScheduleDate scheduleDate in scheduleDates)
+            foreach (ScheduleDate scheduleDate in this.currentScheduleDates)
             {
                 if (i == persons.Count)                    i = 0;
                 if (scheduleDate.dayType == "0")
@@ -266,15 +268,17 @@ namespace OnDuty
                     isCounter = !isCounter;
                 }
             }
+
+            ImportHolidayData();
             CreateTabFromDataList(dicMonthAndScheduleDates);
         }
 
         private void chk_ShowHoliDay_CheckedChanged(object sender, EventArgs e)
         {
             if (chk_ShowHoliDay.Checked)
-                ImportHolidayData(scheduleDates);
+                ImportHolidayData();
             else
-                ImportHolidayData(scheduleNoHoliDayDates);
+                ImportHolidayData();
             CreateTabFromDataList(dicMonthAndScheduleDates);
         }
     }
