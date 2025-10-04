@@ -156,9 +156,10 @@ namespace OnDuty
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.SubItems.Add(item.week);
                         if (chk_ShowHoliDay.Checked)
-                        lvi.SubItems.Add(item.remark);
+                        
                         if (isDuty)
                             lvi.SubItems.Add(item.person);
+                        lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
 
@@ -181,20 +182,22 @@ namespace OnDuty
             listView.GridLines = true;
             listView.Columns.Add("日期", 70, HorizontalAlignment.Center);
             listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView.Columns.Add("星期", 100, HorizontalAlignment.Center);
-            listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listView.Columns.Add("星期", 50, HorizontalAlignment.Center);
+            //listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+
+
+            if (isDuty)
+            {
+                listView.Columns.Add("值班人員", 80);
+            }
+            else
+                listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
+
             if (chk_ShowHoliDay.Checked)
             {
                 listView.Columns.Add("備註", 300);
-                listView.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
+                
             }
-
-            if (isDuty)
-                listView.Columns.Add("值班人員", 100);
-            else
-                listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
-   
-
         }
         private void listView_SelectedIndexChanged(ListView listView)
         {
