@@ -154,16 +154,18 @@ namespace OnDuty
                         displayText += (item.year ?? "") + "/" + (item.month ?? "").TrimStart('0') + "/" + (item.day ?? "").TrimStart('0');
 
                         ListViewItem lvi = new ListViewItem(displayText);
+                        lvi.Tag = item.fullDate;
                         lvi.SubItems.Add(item.week);
-                        if (chk_ShowHoliDay.Checked)
                         
+                            
                         if (isDuty)
                             lvi.SubItems.Add(item.person);
-                        lvi.SubItems.Add(item.remark);
+                        if (chk_ShowHoliDay.Checked)
+                            lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
-
-                        lvisHoliDay.Add(lvi);
+                        
+                            lvisHoliDay.Add(lvi);
                     }
                     listView.Items.AddRange(lvisHoliDay.ToArray());
 
@@ -182,13 +184,13 @@ namespace OnDuty
             listView.GridLines = true;
             listView.Columns.Add("日期", 70, HorizontalAlignment.Center);
             listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView.Columns.Add("星期", 50, HorizontalAlignment.Center);
+            listView.Columns.Add("星期", 60, HorizontalAlignment.Center);
             //listView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
 
 
             if (isDuty)
             {
-                listView.Columns.Add("值班人員", 80);
+                listView.Columns.Add("值班人員", 120);
             }
             else
                 listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
@@ -224,21 +226,26 @@ namespace OnDuty
 
         private void btn_Duty_Click(object sender, EventArgs e)
         {
-            if (scheduleDates?.Any() is false)
+            if (this.scheduleDates?.Any() is false)
             {
                 MessageBox.Show("尚未匯入正確行事曆資料。");
                 return;
             }
-            if (persons?.Any() is false)
+            if (this.persons?.Any() is false)
             {
                 MessageBox.Show("尚未匯入排班人員資料。");
                 return;
             }
             isDuty = true;
+            List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
             if (chk_ShowHoliDay.Checked)
-                CreateDuty(scheduleDates ?? [], persons ?? []);
+                scheduleDates = this.scheduleDates ?? [];
             else
-                CreateDuty(scheduleNoHoliDayDates ?? [], persons ?? []);
+                scheduleDates = this.scheduleNoHoliDayDates ?? [];
+            if (!string.IsNullOrEmpty(tb_SelectDateResult.Text))
+                scheduleDates = scheduleDates.Where(x => x.fullDate >= Convert.ToInt32(tb_SelectDateResult.Text.Replace("/", ""))).ToList();
+                   
+            CreateDuty(scheduleDates, persons ?? []);
         }
         private void CreateDuty(List<ScheduleDate> scheduleDates, List<string> persons)
         {
