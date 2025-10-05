@@ -26,11 +26,16 @@ namespace OnDuty
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
         {
             GetAllDateFromCSVFIle();
-            if (chk_ShowHoliDay.Checked)
-                ImportHolidayData();
-            else
-                ImportHolidayData();
+            InputCurrentScheduleDatasToDictionary();
             CreateTabFromDataList(dicMonthAndScheduleDates);
+        }
+        private void InputCurrentScheduleDatasToDictionary()
+        {
+            if (chk_ShowHoliDay.Checked)
+                this.currentScheduleDates = this.scheduleDates;
+            else
+                this.currentScheduleDates = this.scheduleNoHoliDayDates;
+            ImportHolidayData();
         }
         private void btn_InputPerson_Click(object sender, EventArgs e)
         {
@@ -97,8 +102,8 @@ namespace OnDuty
                             isWorkDayData = true;
                     }
                 }
-                scheduleDates = models;
-                scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
+                this.scheduleDates = models;
+                this.scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
             }
             catch (Exception ex)
             {
@@ -227,9 +232,10 @@ namespace OnDuty
 
         private void btn_Duty_Click(object sender, EventArgs e)
         {
+            string errorMsg = String.Empty;
             if (this.scheduleDates?.Any() is false)
             {
-                MessageBox.Show("尚未匯入正確行事曆資料。");
+                errorMsg = "尚未匯入正確行事曆資料。";
                 return;
             }
             if (this.persons?.Any() is false)
@@ -239,47 +245,59 @@ namespace OnDuty
             }
             isDuty = true;
             List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
-            if (chk_ShowHoliDay.Checked)
-                scheduleDates = this.scheduleDates ?? [];
-            else
-                scheduleDates = this.scheduleNoHoliDayDates ?? [];
-            this.currentScheduleDates = scheduleDates;
+            
             if (!string.IsNullOrEmpty(selectResult))
-                this.currentScheduleDates = this.currentScheduleDates.Where(x => x.fullDate >= Convert.ToInt32(selectResult)).ToList();
-                   
+            {
+                this.scheduleDates = (this.scheduleDates ?? []).Where(x => x.fullDate >= Convert.ToInt32(selectResult)).ToList();
+                this.scheduleNoHoliDayDates = this.scheduleNoHoliDayDates.Where(x => x.fullDate >= Convert.ToInt32(selectResult)).ToList();
+            }
+            InputCurrentScheduleDatasToDictionary();
+
+
             CreateDuty(persons ?? []);
         }
         private void CreateDuty(List<string> persons)
         {
             int i = 0;
             bool isCounter = chk_CounterFirst.Checked;
-            foreach (ScheduleDate scheduleDate in this.currentScheduleDates)
+            bool startDuty = false;
+            if (!string.IsNullOrEmpty(tb_SelectPersonResult.Text))
             {
-                if (i == persons.Count)                    i = 0;
-                if (scheduleDate.dayType == "0")
+                i = persons.IndexOf(tb_SelectPersonResult.Text);
+                if (i == -1)
+                    i = 0;
+                startDuty = true;
+            }
+            else
+                startDuty = true;
+            if (startDuty)
+            {
+                foreach (ScheduleDate scheduleDate in this.currentScheduleDates)
                 {
-                    if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
-                        scheduleDate.person = tb_CounterName.Text;
-                    else
+                    if (i == persons.Count)
+                        i = 0;
+                    if (scheduleDate.dayType == "0")
                     {
-                        scheduleDate.person = persons[i];
-                        i++;
+                        if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
+                            scheduleDate.person = tb_CounterName.Text;
+                        else
+                        {
+                            scheduleDate.person = persons[i];
+                            i++;
+                        }
+                        isCounter = !isCounter;
                     }
-                    isCounter = !isCounter;
                 }
             }
 
             ImportHolidayData();
-            CreateTabFromDataList(dicMonthAndScheduleDates);
+            CreateTabFromDataList(this.dicMonthAndScheduleDates);
         }
 
         private void chk_ShowHoliDay_CheckedChanged(object sender, EventArgs e)
         {
-            if (chk_ShowHoliDay.Checked)
-                ImportHolidayData();
-            else
-                ImportHolidayData();
-            CreateTabFromDataList(dicMonthAndScheduleDates);
+            InputCurrentScheduleDatasToDictionary();
+            CreateTabFromDataList(this.dicMonthAndScheduleDates);
         }
     }
 }
