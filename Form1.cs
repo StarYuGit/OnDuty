@@ -1,3 +1,4 @@
+using ClosedXML.Excel;
 using OnDuty.Models;
 
 namespace OnDuty
@@ -163,15 +164,15 @@ namespace OnDuty
                         ListViewItem lvi = new ListViewItem(displayText);
                         lvi.Tag = item.fullDate + "," + item.dayType;
                         lvi.SubItems.Add(item.week);
-                            
+
                         if (isDuty)
                             lvi.SubItems.Add(item.person);
                         if (chk_ShowHoliDay.Checked)
                             lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
                             lvi.ForeColor = Color.Red;
-                        
-                            lvisHoliDay.Add(lvi);
+
+                        lvisHoliDay.Add(lvi);
                     }
                     listView.Items.AddRange(lvisHoliDay.ToArray());
 
@@ -245,7 +246,7 @@ namespace OnDuty
             }
             isDuty = true;
             List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
-            
+
             if (!string.IsNullOrEmpty(selectResult))
             {
                 this.scheduleDates = (this.scheduleDates ?? []).Where(x => x.fullDate >= Convert.ToInt32(selectResult)).ToList();
@@ -255,40 +256,36 @@ namespace OnDuty
 
 
             CreateDuty(persons ?? []);
+            btn_ExportDutyResult.Visible = true;
         }
         private void CreateDuty(List<string> persons)
         {
             int i = 0;
             bool isCounter = chk_CounterFirst.Checked;
-            bool startDuty = false;
             if (!string.IsNullOrEmpty(tb_SelectPersonResult.Text))
             {
                 i = persons.IndexOf(tb_SelectPersonResult.Text);
                 if (i == -1)
                     i = 0;
-                startDuty = true;
             }
-            else
-                startDuty = true;
-            if (startDuty)
+
+            foreach (ScheduleDate scheduleDate in this.currentScheduleDates)
             {
-                foreach (ScheduleDate scheduleDate in this.currentScheduleDates)
+                if (i == persons.Count)
+                    i = 0;
+                if (scheduleDate.dayType == "0")
                 {
-                    if (i == persons.Count)
-                        i = 0;
-                    if (scheduleDate.dayType == "0")
+                    if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
+                        scheduleDate.person = tb_CounterName.Text;
+                    else
                     {
-                        if (!string.IsNullOrEmpty(tb_CounterName.Text) && isCounter)
-                            scheduleDate.person = tb_CounterName.Text;
-                        else
-                        {
-                            scheduleDate.person = persons[i];
-                            i++;
-                        }
-                        isCounter = !isCounter;
+                        scheduleDate.person = persons[i];
+                        i++;
                     }
+                    isCounter = !isCounter;
                 }
             }
+
 
             ImportHolidayData();
             CreateTabFromDataList(this.dicMonthAndScheduleDates);
@@ -298,6 +295,46 @@ namespace OnDuty
         {
             InputCurrentScheduleDatasToDictionary();
             CreateTabFromDataList(this.dicMonthAndScheduleDates);
+        }
+
+        private void btn_ExportDutyResult_Click(object sender, EventArgs e)
+        {
+            ExportDutyResult();
+        }
+    
+        private void ExportDutyResult()
+        {
+            if (this.dicMonthAndScheduleDates.Count > 0)
+            {
+                // 建立 Excel 檔案
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet1 = workbook.Worksheets.Add("排班結果");
+                    int y = 1;
+                    foreach (string  month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
+                    {
+                        int x = 2;
+                        worksheet1.Cell(1, y).Value = month.TrimStart('0') + "月份";
+                        worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet1.Range(1, y, 1, y + 1).Merge();
+                        List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
+                        foreach (ScheduleDate scheduleDate in scheduleDates)
+                        {
+                            worksheet1.Cell(x, y).Value = scheduleDate.month + "/" + scheduleDate.day;
+                            worksheet1.Cell(x, y + 1).Value = scheduleDate.person;
+                            x++;
+                        }
+                        y += 2;
+                    }
+                    var worksheet2 = workbook.Worksheets.Add("人員清單");
+                    for (int i = 0; i < persons.Count; i++)
+                    {
+                        worksheet2.Cell(i +1 , 1).Value = persons[i];
+                    }
+                    // 儲存檔案
+                    workbook.SaveAs("人員資料.xlsx");
+                }
+            }
         }
     }
 }
