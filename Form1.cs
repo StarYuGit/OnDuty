@@ -1,5 +1,6 @@
 using ClosedXML.Excel;
 using OnDuty.Models;
+using System.Diagnostics;
 
 namespace OnDuty
 {
@@ -15,7 +16,7 @@ namespace OnDuty
         public Form1()
         {
             InitializeComponent();
-
+            lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -45,18 +46,27 @@ namespace OnDuty
         }
         private void GetPersonDataFrom()
         {
-            tb_InputPerson.Text = "C:\\Projects\\OnDuty\\person.txt";
+            //tb_InputPerson.Text = "C:\\Projects\\OnDuty\\person.txt";
             string personFile = tb_InputPerson.Text;
             try
             {
-                using (StreamReader person = new StreamReader(personFile))
+                if (!string.IsNullOrEmpty(personFile))
                 {
-                    string? line = "";
-                    while ((line = person.ReadLine()) != null)
+                    using (StreamReader person = new StreamReader(personFile))
                     {
-                        persons.Add(line);
+                        string? line = "";
+                        while ((line = person.ReadLine()) != null)
+                        {
+                            persons.Add(line);
+                        }
                     }
                 }
+                else
+                {
+                    MessageBox.Show("請先選擇排班人員檔案");
+                    return;
+                }
+        
             }
             catch (Exception ex)
             {
@@ -67,43 +77,52 @@ namespace OnDuty
         private void GetAllDateFromCSVFIle()
         {
 
-            tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
+            // tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
 
             string holidayFile = tb_InputHoliDay.Text;
 
             List<ScheduleDate> models = [];
             try
             {
-                using (StreamReader holiday = new StreamReader(holidayFile))
+                if (!string.IsNullOrEmpty(holidayFile))
                 {
-                    string? line;
-                    bool isWorkDayData = false;
-                    int fullDate = 0;
-                    while ((line = holiday.ReadLine()) != null)
+                    using (StreamReader holiday = new StreamReader(holidayFile))
                     {
-                        if (isWorkDayData)
+                        string? line;
+                        bool isWorkDayData = false;
+                        int fullDate = 0;
+                        while ((line = holiday.ReadLine()) != null)
                         {
-                            fullDate = 0;
-                            string[] dArray = line.Split(',');
-                            if (int.TryParse(dArray[0], out fullDate))
+                            if (isWorkDayData)
                             {
-                                ScheduleDate scheduleDate =
-                                    new ScheduleDate(fullDate,
-                                                     dArray[0].Substring(0, 4),
-                                                        dArray[0].Substring(4, 2),
-                                                        dArray[0].Substring(6, 2),
-                                                        dArray[1],
-                                                        dArray[2],
-                                                        !string.IsNullOrEmpty(dArray[3]) ? dArray[3] : null
-                                                     );
-                                models.Add(scheduleDate);
+                                fullDate = 0;
+                                string[] dArray = line.Split(',');
+                                if (int.TryParse(dArray[0], out fullDate))
+                                {
+                                    ScheduleDate scheduleDate =
+                                        new ScheduleDate(fullDate,
+                                                         dArray[0].Substring(0, 4),
+                                                            dArray[0].Substring(4, 2),
+                                                            dArray[0].Substring(6, 2),
+                                                            dArray[1],
+                                                            dArray[2],
+                                                            !string.IsNullOrEmpty(dArray[3]) ? dArray[3] : null
+                                                         );
+                                    models.Add(scheduleDate);
+                                }
                             }
+                            if ("西元日期,星期,是否放假,備註".Equals(line))
+                                isWorkDayData = true;
                         }
-                        if ("西元日期,星期,是否放假,備註".Equals(line))
-                            isWorkDayData = true;
                     }
                 }
-                this.scheduleDates = models;
+                else
+                {
+                    MessageBox.Show("請先選擇行事曆檔案");
+                    return;
+                }
+
+                    this.scheduleDates = models;
                 this.scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
             }
             catch (Exception ex)
@@ -224,6 +243,9 @@ namespace OnDuty
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
+                openFileDialog.Title = "請選擇檔案";
+                openFileDialog.Filter = "csv檔 (*.csv)|*.csv"; 
+                openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     tb_InputHoliDay.Text = openFileDialog.FileName;
@@ -233,10 +255,9 @@ namespace OnDuty
 
         private void btn_Duty_Click(object sender, EventArgs e)
         {
-            string errorMsg = String.Empty;
             if (this.scheduleDates?.Any() is false)
             {
-                errorMsg = "尚未匯入正確行事曆資料。";
+                MessageBox.Show("尚未匯入行事曆資料。");
                 return;
             }
             if (this.persons?.Any() is false)
@@ -301,7 +322,7 @@ namespace OnDuty
         {
             ExportDutyResult();
         }
-    
+
         private void ExportDutyResult()
         {
             if (this.dicMonthAndScheduleDates.Count > 0)
@@ -309,30 +330,68 @@ namespace OnDuty
                 // 建立 Excel 檔案
                 using (var workbook = new XLWorkbook())
                 {
-                    var worksheet1 = workbook.Worksheets.Add("排班結果");
+                    var worksheet1 = workbook.Worksheets.Add("櫃臺輪值表");
+                    
                     int y = 1;
-                    foreach (string  month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
+                    foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                     {
                         int x = 2;
                         worksheet1.Cell(1, y).Value = month.TrimStart('0') + "月份";
                         worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        worksheet1.Range(1, y, 1, y + 1).Merge();
+                        worksheet1.Range(1, y, 1, y + 2).Merge();
                         List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
                         foreach (ScheduleDate scheduleDate in scheduleDates)
                         {
                             worksheet1.Cell(x, y).Value = scheduleDate.month + "/" + scheduleDate.day;
-                            worksheet1.Cell(x, y + 1).Value = scheduleDate.person;
+                            worksheet1.Cell(x, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
+                            worksheet1.Cell(x, y + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
                             x++;
                         }
-                        y += 2;
+                        y += 3;
                     }
                     var worksheet2 = workbook.Worksheets.Add("人員清單");
+                    
                     for (int i = 0; i < persons.Count; i++)
                     {
-                        worksheet2.Cell(i +1 , 1).Value = persons[i];
+                        worksheet2.Cell(i + 1, 1).Value = persons[i];
                     }
+  
                     // 儲存檔案
-                    workbook.SaveAs("人員資料.xlsx");
+                    workbook.SaveAs("櫃臺輪值表_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".xlsx");
+                }
+            }
+        }
+
+        private void lL_SchedulePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string targetUrl = e.Link.LinkData as string ?? "";
+
+            if (!string.IsNullOrEmpty(targetUrl))
+            {
+                try
+                {
+                    // 使用預設瀏覽器開啟連結
+                    Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("無法開啟連結: " + ex.Message);
+                }
+            }
+        }
+
+        private void btn_InputPersonFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Title = "請選擇檔案";
+                openFileDialog.Filter = "txt檔 (*.txt)|*.txt";
+                openFileDialog.Multiselect = false;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    tb_InputPerson.Text = openFileDialog.FileName;
                 }
             }
         }
