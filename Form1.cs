@@ -9,7 +9,8 @@ namespace OnDuty
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
         private List<ScheduleDate> currentScheduleDates = new();
-        bool isDuty = false;
+        private bool isDebug = true;
+        private bool isDuty = false;
         List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         string selectResult = "";
@@ -21,8 +22,8 @@ namespace OnDuty
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            string counterName = Properties.Settings.Default.counterName;
-            tb_CounterName.Text = counterName;
+            tb_CounterName.Text = Properties.Settings.Default.counterName;
+            tb_InputPerson.Text = Properties.Settings.Default.personFilePath;
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
@@ -46,7 +47,8 @@ namespace OnDuty
         }
         private void GetPersonDataFrom()
         {
-            //tb_InputPerson.Text = "C:\\Projects\\OnDuty\\person.txt";
+            if (isDebug)
+                tb_InputPerson.Text = "C:\\Projects\\OnDuty\\person.txt";
             string personFile = tb_InputPerson.Text;
             try
             {
@@ -76,8 +78,8 @@ namespace OnDuty
         }
         private void GetAllDateFromCSVFIle()
         {
-
-            // tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
+            if (isDebug)
+                tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114年中華民國政府行政機關辦公日曆表(修正版).csv";
 
             string holidayFile = tb_InputHoliDay.Text;
 
@@ -93,6 +95,17 @@ namespace OnDuty
                         int fullDate = 0;
                         while ((line = holiday.ReadLine()) != null)
                         {
+                            if ("西元日期,星期,是否放假,備註".Equals(line))
+                            {
+                                isWorkDayData = true;
+                                continue;
+                            }
+                            else if (isWorkDayData is false)
+                            {
+                                MessageBox.Show("檔案錯誤：\n請下載「xxx年中華民國政府行政機關辦公日曆表」");
+                                return;
+                            }
+                                
                             if (isWorkDayData)
                             {
                                 fullDate = 0;
@@ -111,8 +124,7 @@ namespace OnDuty
                                     models.Add(scheduleDate);
                                 }
                             }
-                            if ("西元日期,星期,是否放假,備註".Equals(line))
-                                isWorkDayData = true;
+
                         }
                     }
                 }
@@ -277,6 +289,9 @@ namespace OnDuty
 
 
             CreateDuty(persons ?? []);
+            Properties.Settings.Default.counterName = tb_CounterName.Text;
+            Properties.Settings.Default.personFilePath = tb_InputPerson.Text;
+            Properties.Settings.Default.Save();
             btn_ExportDutyResult.Visible = true;
         }
         private void CreateDuty(List<string> persons)
@@ -351,13 +366,16 @@ namespace OnDuty
                         }
                         y += 3;
                     }
+                    worksheet1.Columns().AdjustToContents();
+
                     var worksheet2 = workbook.Worksheets.Add("人員清單");
-                    
+
                     for (int i = 0; i < persons.Count; i++)
                     {
                         worksheet2.Cell(i + 1, 1).Value = persons[i];
                     }
-  
+                    
+                    
                     // 儲存檔案
                     workbook.SaveAs("櫃臺輪值表_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".xlsx");
                 }
@@ -366,7 +384,7 @@ namespace OnDuty
 
         private void lL_SchedulePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string targetUrl = e.Link.LinkData as string ?? "";
+            string targetUrl = (e.Link ?? new()).LinkData as string ?? "";
 
             if (!string.IsNullOrEmpty(targetUrl))
             {
