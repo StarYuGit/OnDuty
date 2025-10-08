@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using OnDuty.Models;
 using System.Diagnostics;
 
@@ -201,7 +202,7 @@ namespace OnDuty
                         if (chk_ShowHoliDay.Checked)
                             lvi.SubItems.Add(item.remark);
                         if (item.dayType == "2")
-                            lvi.ForeColor = Color.Red;
+                            lvi.ForeColor = System.Drawing.Color.Red;
 
                         lvisHoliDay.Add(lvi);
                     }
@@ -366,7 +367,35 @@ namespace OnDuty
                         }
                         y += 3;
                     }
-                    worksheet1.Columns().AdjustToContents();
+                    // ===========================
+                    // 手動計算每欄最長字元長度，並設定欄寬
+                    // ===========================
+
+                    var usedRange = worksheet1.RangeUsed();
+                    if (usedRange != null)
+                    {
+                        int lastRow = usedRange.LastRow().RowNumber();
+                        int lastCol = usedRange.LastColumn().ColumnNumber();
+
+                        // 只考慮第 2 列以後
+                        for (int c = 1; c <= lastCol; c++)
+                        {
+                            // 找出這一欄（第 2 列以後）的最長字串長度
+                            int maxLen = 0;
+                            for (int r = 2; r <= lastRow; r++)
+                            {
+                                var val = worksheet1.Cell(r, c).GetString();
+                                if (!string.IsNullOrEmpty(val))
+                                {
+                                    // 取字數長度（中文或英文都計）
+                                    maxLen = Math.Max(maxLen, val.Length);
+                                }
+                            }
+
+                            // 設定寬度：字數 * 1.5 + 額外間距
+                            worksheet1.Column(c).Width = maxLen * 1.5 + 2;
+                        }
+                    }
 
                     var worksheet2 = workbook.Worksheets.Add("人員清單");
 
@@ -374,7 +403,6 @@ namespace OnDuty
                     {
                         worksheet2.Cell(i + 1, 1).Value = persons[i];
                     }
-                    
                     
                     // 儲存檔案
                     workbook.SaveAs("櫃臺輪值表_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".xlsx");
