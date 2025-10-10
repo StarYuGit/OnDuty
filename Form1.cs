@@ -363,9 +363,27 @@ namespace OnDuty
                             worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
                             worksheet1.Cell(x, y + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                             worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
-                            x++;
+                            if (chk_ShowHoliDay.Checked)
+                            {
+                                worksheet1.Cell(x, y + 3).Value = scheduleDate.remark;
+                                worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Red;
+                                worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Red;
+                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Red;
+                                worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Red;
+                            }
+                            else
+                            {
+                                worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Black;
+                                worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Black;
+                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Black;
+                                worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Black;
+                            }
+                                x++;
                         }
-                        y += 3;
+                        if (chk_ShowHoliDay.Checked)
+                            y += 4;
+                        else
+                            y += 3;
                     }
                     // ===========================
                     // 手動計算每欄最長字元長度，並設定欄寬
