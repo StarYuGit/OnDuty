@@ -347,10 +347,12 @@ namespace OnDuty
                 using (var workbook = new XLWorkbook())
                 {
                     var worksheet1 = workbook.Worksheets.Add("櫃臺輪值表");
-                    
+
                     int y = 1;
+                    
                     foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                     {
+
                         int x = 2;
                         worksheet1.Cell(1, y).Value = month.TrimStart('0') + "月份";
                         worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -360,25 +362,29 @@ namespace OnDuty
                         {
                             worksheet1.Cell(x, y).Value = scheduleDate.month + "/" + scheduleDate.day;
                             worksheet1.Cell(x, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.Yellow;
+                            
                             worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
                             worksheet1.Cell(x, y + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Cell(x, y + 1).Style.Fill.BackgroundColor = XLColor.Yellow;
+
                             worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
+                            worksheet1.Cell(x, y + 2).Style.Fill.BackgroundColor = XLColor.Yellow;
                             if (chk_ShowHoliDay.Checked)
                             {
                                 worksheet1.Cell(x, y + 3).Value = scheduleDate.remark;
-                                worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Red;
-                                worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Red;
-                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Red;
-                                worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Red;
+                                worksheet1.Cell(x, y + 3).Style.Fill.BackgroundColor = XLColor.Yellow;
+                                if ("2".Equals(scheduleDate.dayType))
+                                {
+                                    worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Red;
+                                    worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Red;
+                                    worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Red;
+                                    worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Red;
+                                }
+                        
                             }
-                            else
-                            {
-                                worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Black;
-                                worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Black;
-                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Black;
-                                worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Black;
-                            }
-                                x++;
+                    
+                            x++;
                         }
                         if (chk_ShowHoliDay.Checked)
                             y += 4;
