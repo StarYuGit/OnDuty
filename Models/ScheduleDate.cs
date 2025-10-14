@@ -8,7 +8,7 @@ namespace OnDuty.Models
 {
     public class ScheduleDate
     {
-        public ScheduleDate() {}
+        public ScheduleDate() { }
         public ScheduleDate(int fullDate, string year, string month, string day, string week, string dayType, string remark)
         {
             this.fullDate = fullDate;
@@ -27,5 +27,6 @@ namespace OnDuty.Models
         public string? dayType { get; set; }
         public string? remark { set; get; } = null;
         public string? person { get; set; }
+        public bool isDiffWeek { get; set; }
     }
 }

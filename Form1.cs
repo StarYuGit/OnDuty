@@ -1,5 +1,4 @@
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using OnDuty.Models;
 using System.Diagnostics;
 
@@ -10,7 +9,7 @@ namespace OnDuty
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
         private List<ScheduleDate> currentScheduleDates = new();
-        private bool isDebug = true;
+        private bool isDebug = false;
         private bool isDuty = false;
         List<string> persons = new List<string>();
         Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
@@ -18,13 +17,18 @@ namespace OnDuty
         public Form1()
         {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle; // 固定邊框
+            this.MaximizeBox = false; // 禁用最大化按鈕
             lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            tb_CounterName.Text = Properties.Settings.Default.counterName;
+
+            tb_InputHoliDay.Text = Properties.Settings.Default.scheduleFilePath;
             tb_InputPerson.Text = Properties.Settings.Default.personFilePath;
+            tb_CounterName.Text = Properties.Settings.Default.counterName;
+
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
@@ -69,7 +73,7 @@ namespace OnDuty
                     MessageBox.Show("請先選擇排班人員檔案");
                     return;
                 }
-        
+
             }
             catch (Exception ex)
             {
@@ -106,7 +110,7 @@ namespace OnDuty
                                 MessageBox.Show("檔案錯誤：\n請下載「xxx年中華民國政府行政機關辦公日曆表」");
                                 return;
                             }
-                                
+
                             if (isWorkDayData)
                             {
                                 fullDate = 0;
@@ -134,8 +138,17 @@ namespace OnDuty
                     MessageBox.Show("請先選擇行事曆檔案");
                     return;
                 }
-
-                    this.scheduleDates = models;
+                if (models?.Any() is true)
+                {
+                    bool isDiffWeek = false;
+                    foreach (ScheduleDate model in models)
+                    {
+                        model.isDiffWeek = isDiffWeek;
+                        if ("日".Equals(model.week))
+                            isDiffWeek = !isDiffWeek;
+                    }
+                }
+                this.scheduleDates = models;
                 this.scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
             }
             catch (Exception ex)
@@ -166,7 +179,6 @@ namespace OnDuty
                 {
                     ListViewItem lvi = new ListViewItem(person);
                     lviPoersons.Add(lvi);
-
                 }
                 lv_person.Items.AddRange(lviPoersons.ToArray());
                 lv_person.SelectedIndexChanged += (sender, e) => lv_person_SelectedIndexChanged(lv_person);
@@ -257,7 +269,7 @@ namespace OnDuty
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Title = "請選擇檔案";
-                openFileDialog.Filter = "csv檔 (*.csv)|*.csv"; 
+                openFileDialog.Filter = "csv檔 (*.csv)|*.csv";
                 openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -290,9 +302,7 @@ namespace OnDuty
 
 
             CreateDuty(persons ?? []);
-            Properties.Settings.Default.counterName = tb_CounterName.Text;
-            Properties.Settings.Default.personFilePath = tb_InputPerson.Text;
-            Properties.Settings.Default.Save();
+            SaveSetting();
             btn_ExportDutyResult.Visible = true;
         }
         private void CreateDuty(List<string> persons)
@@ -346,44 +356,56 @@ namespace OnDuty
                 // 建立 Excel 檔案
                 using (var workbook = new XLWorkbook())
                 {
+
                     var worksheet1 = workbook.Worksheets.Add("櫃臺輪值表");
 
                     int y = 1;
-                    
+
                     foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                     {
-
                         int x = 2;
+                        worksheet1.Style.Font.FontName = "標楷體";
+                        worksheet1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet1.Style.Font.FontSize = 12;
+
                         worksheet1.Cell(1, y).Value = month.TrimStart('0') + "月份";
                         worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        worksheet1.Range(1, y, 1, y + 2).Merge();
+                        worksheet1.Cell(1, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        if (chk_ShowHoliDay.Checked)
+                            worksheet1.Range(1, y, 1, y + 3).Merge();
+                        else
+                            worksheet1.Range(1, y, 1, y + 2).Merge();
                         List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
                         foreach (ScheduleDate scheduleDate in scheduleDates)
                         {
-                            worksheet1.Cell(x, y).Value = scheduleDate.month + "/" + scheduleDate.day;
-                            worksheet1.Cell(x, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                            worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.Yellow;
-                            
+                            worksheet1.Cell(x, y).Value = (scheduleDate.month ?? "").TrimStart('0') + "月" + (scheduleDate.day ?? "").TrimStart('0') + "日";
+                            worksheet1.Cell(x, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            if (scheduleDate.isDiffWeek)
+                                worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightYellow;
+                            else
+                                worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightBlue;
+
                             worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
-                            worksheet1.Cell(x, y + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                            worksheet1.Cell(x, y + 1).Style.Fill.BackgroundColor = XLColor.Yellow;
+                            worksheet1.Cell(x, y + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
                             worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
-                            worksheet1.Cell(x, y + 2).Style.Fill.BackgroundColor = XLColor.Yellow;
+                            worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            if (!string.IsNullOrEmpty(tb_CounterName.Text) && tb_CounterName.Text.Equals(scheduleDate.person))
+                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Blue;
                             if (chk_ShowHoliDay.Checked)
                             {
                                 worksheet1.Cell(x, y + 3).Value = scheduleDate.remark;
-                                worksheet1.Cell(x, y + 3).Style.Fill.BackgroundColor = XLColor.Yellow;
+                                worksheet1.Cell(x, y + 3).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
                                 if ("2".Equals(scheduleDate.dayType))
                                 {
-                                    worksheet1.Cell(x, y).Style.Font.FontColor = XLColor.Red;
-                                    worksheet1.Cell(x, y + 1).Style.Font.FontColor = XLColor.Red;
-                                    worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Red;
-                                    worksheet1.Cell(x, y + 3).Style.Font.FontColor = XLColor.Red;
+                                    for (int i = y; i <= y + 3; i++)
+                                    {
+                                        worksheet1.Cell(x, i).Style.Font.FontColor = XLColor.Red;
+                                    }
                                 }
-                        
                             }
-                    
+
                             x++;
                         }
                         if (chk_ShowHoliDay.Checked)
@@ -427,9 +449,16 @@ namespace OnDuty
                     {
                         worksheet2.Cell(i + 1, 1).Value = persons[i];
                     }
-                    
+                    worksheet2.Style.Font.FontName = "標楷體";
+                    worksheet2.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    worksheet2.Style.Font.FontSize = 12;
+                    string fileName = "櫃臺輪值表_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".xlsx";
                     // 儲存檔案
-                    workbook.SaveAs("櫃臺輪值表_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".xlsx");
+                    //workbook.SaveAs(fileName);
+                    if (File.Exists(fileName))
+                        MessageBox.Show("檔案已儲存至：" + Path.GetFullPath(fileName));
+                    else
+                        MessageBox.Show("檔案儲存失敗");
                 }
             }
         }
@@ -464,6 +493,39 @@ namespace OnDuty
                     tb_InputPerson.Text = openFileDialog.FileName;
                 }
             }
+        }
+
+        private void btn_SaveSetting_Click(object sender, EventArgs e)
+        {
+            SaveSetting();
+            MessageBox.Show("設定已儲存");
+        }
+
+        private void btn_ClearSetting_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "確定清除設定？",            // 訊息文字
+                "確認",                 // 視窗標題
+                MessageBoxButtons.YesNo, // 按鈕樣式
+                MessageBoxIcon.Question  // 圖示
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                tb_InputHoliDay.Text = "";
+                tb_InputPerson.Text = "";
+                tb_CounterName.Text = "";
+                Properties.Settings.Default.Reset();
+                Properties.Settings.Default.Save();
+                MessageBox.Show("設定已清除");
+            }
+        }
+        private void SaveSetting()
+        {
+            Properties.Settings.Default.scheduleFilePath = tb_InputHoliDay.Text;
+            Properties.Settings.Default.personFilePath = tb_InputPerson.Text;
+            Properties.Settings.Default.counterName = tb_CounterName.Text;
+            Properties.Settings.Default.Save();
         }
     }
 }

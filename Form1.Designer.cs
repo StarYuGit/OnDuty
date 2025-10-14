@@ -51,12 +51,14 @@
             chk_ShowHoliDay = new CheckBox();
             btn_ExportDutyResult = new Button();
             lL_SchedulePage = new LinkLabel();
+            btn_SaveSetting = new Button();
+            btn_ClearSetting = new Button();
             SuspendLayout();
             // 
             // lb_InputHoliDay
             // 
             lb_InputHoliDay.AutoSize = true;
-            lb_InputHoliDay.Location = new Point(27, 12);
+            lb_InputHoliDay.Location = new Point(29, 65);
             lb_InputHoliDay.Name = "lb_InputHoliDay";
             lb_InputHoliDay.Size = new Size(108, 15);
             lb_InputHoliDay.TabIndex = 0;
@@ -64,14 +66,14 @@
             // 
             // tb_InputHoliDay
             // 
-            tb_InputHoliDay.Location = new Point(141, 9);
+            tb_InputHoliDay.Location = new Point(143, 62);
             tb_InputHoliDay.Name = "tb_InputHoliDay";
             tb_InputHoliDay.Size = new Size(220, 23);
             tb_InputHoliDay.TabIndex = 1;
             // 
             // btn_InputHoliDay
             // 
-            btn_InputHoliDay.Location = new Point(451, 9);
+            btn_InputHoliDay.Location = new Point(453, 62);
             btn_InputHoliDay.Name = "btn_InputHoliDay";
             btn_InputHoliDay.Size = new Size(75, 23);
             btn_InputHoliDay.TabIndex = 2;
@@ -82,7 +84,7 @@
             // lb_InputPerson
             // 
             lb_InputPerson.AutoSize = true;
-            lb_InputPerson.Location = new Point(27, 70);
+            lb_InputPerson.Location = new Point(29, 123);
             lb_InputPerson.Name = "lb_InputPerson";
             lb_InputPerson.Size = new Size(103, 15);
             lb_InputPerson.TabIndex = 3;
@@ -90,7 +92,7 @@
             // 
             // btn_InputPerson
             // 
-            btn_InputPerson.Location = new Point(451, 66);
+            btn_InputPerson.Location = new Point(453, 119);
             btn_InputPerson.Name = "btn_InputPerson";
             btn_InputPerson.Size = new Size(75, 23);
             btn_InputPerson.TabIndex = 4;
@@ -100,7 +102,7 @@
             // 
             // tb_InputPerson
             // 
-            tb_InputPerson.Location = new Point(141, 68);
+            tb_InputPerson.Location = new Point(143, 121);
             tb_InputPerson.Name = "tb_InputPerson";
             tb_InputPerson.Size = new Size(220, 23);
             tb_InputPerson.TabIndex = 5;
@@ -108,7 +110,7 @@
             // lb_CounterName
             // 
             lb_CounterName.AutoSize = true;
-            lb_CounterName.Location = new Point(27, 112);
+            lb_CounterName.Location = new Point(29, 165);
             lb_CounterName.Name = "lb_CounterName";
             lb_CounterName.Size = new Size(67, 15);
             lb_CounterName.TabIndex = 6;
@@ -116,7 +118,7 @@
             // 
             // tb_CounterName
             // 
-            tb_CounterName.Location = new Point(141, 109);
+            tb_CounterName.Location = new Point(143, 162);
             tb_CounterName.Name = "tb_CounterName";
             tb_CounterName.Size = new Size(100, 23);
             tb_CounterName.TabIndex = 7;
@@ -124,7 +126,7 @@
             // lb_SelectDate
             // 
             lb_SelectDate.AutoSize = true;
-            lb_SelectDate.Location = new Point(27, 149);
+            lb_SelectDate.Location = new Point(29, 202);
             lb_SelectDate.Name = "lb_SelectDate";
             lb_SelectDate.Size = new Size(115, 15);
             lb_SelectDate.TabIndex = 8;
@@ -132,7 +134,7 @@
             // 
             // tabDates
             // 
-            tabDates.Location = new Point(16, 188);
+            tabDates.Location = new Point(18, 241);
             tabDates.Name = "tabDates";
             tabDates.SelectedIndex = 0;
             tabDates.Size = new Size(332, 275);
@@ -160,7 +162,7 @@
             // 
             // btn_InputHoliDayFile
             // 
-            btn_InputHoliDayFile.Location = new Point(370, 9);
+            btn_InputHoliDayFile.Location = new Point(372, 62);
             btn_InputHoliDayFile.Name = "btn_InputHoliDayFile";
             btn_InputHoliDayFile.Size = new Size(75, 23);
             btn_InputHoliDayFile.TabIndex = 10;
@@ -170,7 +172,7 @@
             // 
             // btn_InputPersonFile
             // 
-            btn_InputPersonFile.Location = new Point(370, 66);
+            btn_InputPersonFile.Location = new Point(372, 119);
             btn_InputPersonFile.Name = "btn_InputPersonFile";
             btn_InputPersonFile.Size = new Size(75, 23);
             btn_InputPersonFile.TabIndex = 11;
@@ -181,7 +183,7 @@
             // lb_SelectPerson
             // 
             lb_SelectPerson.AutoSize = true;
-            lb_SelectPerson.Location = new Point(260, 151);
+            lb_SelectPerson.Location = new Point(262, 204);
             lb_SelectPerson.Name = "lb_SelectPerson";
             lb_SelectPerson.Size = new Size(115, 15);
             lb_SelectPerson.TabIndex = 12;
@@ -189,14 +191,14 @@
             // 
             // tb_SelectDateResult
             // 
-            tb_SelectDateResult.Location = new Point(141, 146);
+            tb_SelectDateResult.Location = new Point(143, 199);
             tb_SelectDateResult.Name = "tb_SelectDateResult";
             tb_SelectDateResult.Size = new Size(100, 23);
             tb_SelectDateResult.TabIndex = 13;
             // 
             // tb_SelectPersonResult
             // 
-            tb_SelectPersonResult.Location = new Point(370, 146);
+            tb_SelectPersonResult.Location = new Point(372, 199);
             tb_SelectPersonResult.Name = "tb_SelectPersonResult";
             tb_SelectPersonResult.Size = new Size(77, 23);
             tb_SelectPersonResult.TabIndex = 14;
@@ -205,8 +207,8 @@
             // 
             lv_person.FullRowSelect = true;
             lv_person.GridLines = true;
-            lv_person.Location = new Point(363, 191);
-            lv_person.Margin = new Padding(2, 2, 2, 2);
+            lv_person.Location = new Point(365, 244);
+            lv_person.Margin = new Padding(2);
             lv_person.Name = "lv_person";
             lv_person.Size = new Size(156, 274);
             lv_person.TabIndex = 15;
@@ -215,7 +217,7 @@
             // 
             // btn_Duty
             // 
-            btn_Duty.Location = new Point(453, 146);
+            btn_Duty.Location = new Point(455, 199);
             btn_Duty.Name = "btn_Duty";
             btn_Duty.Size = new Size(75, 23);
             btn_Duty.TabIndex = 16;
@@ -226,8 +228,8 @@
             // chk_CounterFirst
             // 
             chk_CounterFirst.AutoSize = true;
-            chk_CounterFirst.Location = new Point(260, 97);
-            chk_CounterFirst.Margin = new Padding(2, 2, 2, 2);
+            chk_CounterFirst.Location = new Point(262, 150);
+            chk_CounterFirst.Margin = new Padding(2);
             chk_CounterFirst.Name = "chk_CounterFirst";
             chk_CounterFirst.Size = new Size(98, 19);
             chk_CounterFirst.TabIndex = 17;
@@ -237,8 +239,8 @@
             // chk_ShowHoliDay
             // 
             chk_ShowHoliDay.AutoSize = true;
-            chk_ShowHoliDay.Location = new Point(260, 120);
-            chk_ShowHoliDay.Margin = new Padding(2, 2, 2, 2);
+            chk_ShowHoliDay.Location = new Point(262, 173);
+            chk_ShowHoliDay.Margin = new Padding(2);
             chk_ShowHoliDay.Name = "chk_ShowHoliDay";
             chk_ShowHoliDay.Size = new Size(74, 19);
             chk_ShowHoliDay.TabIndex = 18;
@@ -248,7 +250,7 @@
             // 
             // btn_ExportDutyResult
             // 
-            btn_ExportDutyResult.Location = new Point(451, 104);
+            btn_ExportDutyResult.Location = new Point(453, 157);
             btn_ExportDutyResult.Name = "btn_ExportDutyResult";
             btn_ExportDutyResult.Size = new Size(75, 23);
             btn_ExportDutyResult.TabIndex = 19;
@@ -260,7 +262,7 @@
             // lL_SchedulePage
             // 
             lL_SchedulePage.AutoSize = true;
-            lL_SchedulePage.Location = new Point(141, 35);
+            lL_SchedulePage.Location = new Point(143, 88);
             lL_SchedulePage.Margin = new Padding(2, 0, 2, 0);
             lL_SchedulePage.Name = "lL_SchedulePage";
             lL_SchedulePage.Size = new Size(322, 15);
@@ -269,11 +271,34 @@
             lL_SchedulePage.Text = "下載行事曆(政資資料開放平臺)，勿下載Google行事曆專用";
             lL_SchedulePage.LinkClicked += lL_SchedulePage_LinkClicked;
             // 
+            // btn_SaveSetting
+            // 
+            btn_SaveSetting.Location = new Point(372, 11);
+            btn_SaveSetting.Name = "btn_SaveSetting";
+            btn_SaveSetting.Size = new Size(75, 23);
+            btn_SaveSetting.TabIndex = 21;
+            btn_SaveSetting.Text = "儲存設定";
+            btn_SaveSetting.UseVisualStyleBackColor = true;
+            btn_SaveSetting.Click += btn_SaveSetting_Click;
+            // 
+            // btn_ClearSetting
+            // 
+            btn_ClearSetting.Location = new Point(453, 11);
+            btn_ClearSetting.Name = "btn_ClearSetting";
+            btn_ClearSetting.Size = new Size(75, 23);
+            btn_ClearSetting.TabIndex = 22;
+            btn_ClearSetting.Text = "清除設定";
+            btn_ClearSetting.UseVisualStyleBackColor = true;
+            btn_ClearSetting.Click += btn_ClearSetting_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
+            
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(539, 509);
+            ClientSize = new Size(540, 536);
+            Controls.Add(btn_ClearSetting);
+            Controls.Add(btn_SaveSetting);
             Controls.Add(lL_SchedulePage);
             Controls.Add(btn_ExportDutyResult);
             Controls.Add(chk_ShowHoliDay);
@@ -296,7 +321,7 @@
             Controls.Add(tb_InputHoliDay);
             Controls.Add(lb_InputHoliDay);
             Name = "Form1";
-            Text = "Form1";
+            Text = "櫃檯排班小工具";
             Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -327,5 +352,7 @@
         private CheckBox chk_ShowHoliDay;
         private Button btn_ExportDutyResult;
         private LinkLabel lL_SchedulePage;
+        private Button btn_SaveSetting;
+        private Button btn_ClearSetting;
     }
 }

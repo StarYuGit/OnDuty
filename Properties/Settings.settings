@@ -3,9 +3,12 @@
   <Profiles />
   <Settings>
     <Setting Name="counterName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">林妮妮</Value>
+      <Value Profile="(Default)">妮妮</Value>
     </Setting>
     <Setting Name="personFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="scheduleFilePath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
