@@ -336,6 +336,8 @@ namespace OnDuty
 
             ImportHolidayData();
             CreateTabFromDataList(this.dicMonthAndScheduleDates);
+            tb_SelectDateResult.Text = "";
+            tb_SelectPersonResult.Text = "";
         }
 
         private void chk_ShowHoliDay_CheckedChanged(object sender, EventArgs e)

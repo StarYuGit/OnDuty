@@ -58,7 +58,7 @@
             // lb_InputHoliDay
             // 
             lb_InputHoliDay.AutoSize = true;
-            lb_InputHoliDay.Location = new Point(28, 50);
+            lb_InputHoliDay.Location = new Point(28, 51);
             lb_InputHoliDay.Name = "lb_InputHoliDay";
             lb_InputHoliDay.Size = new Size(108, 15);
             lb_InputHoliDay.TabIndex = 0;
@@ -66,7 +66,7 @@
             // 
             // tb_InputHoliDay
             // 
-            tb_InputHoliDay.Location = new Point(142, 47);
+            tb_InputHoliDay.Location = new Point(142, 48);
             tb_InputHoliDay.Name = "tb_InputHoliDay";
             tb_InputHoliDay.Size = new Size(220, 23);
             tb_InputHoliDay.TabIndex = 1;
@@ -268,7 +268,7 @@
             lL_SchedulePage.Size = new Size(322, 15);
             lL_SchedulePage.TabIndex = 20;
             lL_SchedulePage.TabStop = true;
-            lL_SchedulePage.Text = "下載行事曆(政資資料開放平臺)，勿下載Google行事曆專用";
+            lL_SchedulePage.Text = "下載行事曆(政府資料開放平臺)，勿下載Google行事曆專用";
             lL_SchedulePage.LinkClicked += lL_SchedulePage_LinkClicked;
             // 
             // btn_SaveSetting
