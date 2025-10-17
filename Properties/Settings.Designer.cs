@@ -58,5 +58,29 @@ namespace OnDuty.Properties {
                 this["scheduleFilePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool counterFirst {
+            get {
+                return ((bool)(this["counterFirst"]));
+            }
+            set {
+                this["counterFirst"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool showHoliday {
+            get {
+                return ((bool)(this["showHoliday"]));
+            }
+            set {
+                this["showHoliday"] = value;
+            }
+        }
     }
 }

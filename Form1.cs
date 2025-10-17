@@ -24,11 +24,11 @@ namespace OnDuty
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
             tb_InputHoliDay.Text = Properties.Settings.Default.scheduleFilePath;
             tb_InputPerson.Text = Properties.Settings.Default.personFilePath;
-            tb_CounterName.Text = Properties.Settings.Default.counterName;
-
+            tb_CounterName.Text = Properties.Settings.Default.counterName;  
+            chk_CounterFirst.Checked = Properties.Settings.Default.counterFirst;
+            chk_ShowHoliDay.Checked = Properties.Settings.Default.showHoliday;
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
@@ -454,7 +454,7 @@ namespace OnDuty
                     worksheet2.Style.Font.FontSize = 12;
                     string fileName = "櫃臺輪值表_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".xlsx";
                     // 儲存檔案
-                    //workbook.SaveAs(fileName);
+                    workbook.SaveAs(fileName);
                     if (File.Exists(fileName))
                         MessageBox.Show("檔案已儲存至：" + Path.GetFullPath(fileName));
                     else
@@ -515,6 +515,8 @@ namespace OnDuty
                 tb_InputHoliDay.Text = "";
                 tb_InputPerson.Text = "";
                 tb_CounterName.Text = "";
+                chk_CounterFirst.Checked = false;
+                chk_ShowHoliDay.Checked = false;
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.Save();
                 MessageBox.Show("設定已清除");
@@ -525,6 +527,8 @@ namespace OnDuty
             Properties.Settings.Default.scheduleFilePath = tb_InputHoliDay.Text;
             Properties.Settings.Default.personFilePath = tb_InputPerson.Text;
             Properties.Settings.Default.counterName = tb_CounterName.Text;
+            Properties.Settings.Default.counterFirst = chk_CounterFirst.Checked;
+            Properties.Settings.Default.showHoliday = chk_ShowHoliDay.Checked;
             Properties.Settings.Default.Save();
         }
     }
