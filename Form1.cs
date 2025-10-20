@@ -11,22 +11,23 @@ namespace OnDuty
         private List<ScheduleDate> currentScheduleDates = new();
         private bool isDebug = false;
         private bool isDuty = false;
-        List<string> persons = new List<string>();
-        Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
+        private List<string> persons = new List<string>();
+        private Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
         string selectResult = "";
         public Form1()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle; // 固定邊框
             this.MaximizeBox = false; // 禁用最大化按鈕
-            lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718");
+            lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718"); //在LabelLink上加入連結
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 載入時把Settings的值帶入
             tb_InputHoliDay.Text = Properties.Settings.Default.scheduleFilePath;
             tb_InputPerson.Text = Properties.Settings.Default.personFilePath;
-            tb_CounterName.Text = Properties.Settings.Default.counterName;  
+            tb_CounterName.Text = Properties.Settings.Default.counterName;
             chk_CounterFirst.Checked = Properties.Settings.Default.counterFirst;
             chk_ShowHoliDay.Checked = Properties.Settings.Default.showHoliday;
         }
@@ -59,6 +60,8 @@ namespace OnDuty
             {
                 if (!string.IsNullOrEmpty(personFile))
                 {
+                    if (persons.Count > 0)
+                        persons = [];
                     using (StreamReader person = new StreamReader(personFile))
                     {
                         string? line = "";
@@ -148,8 +151,8 @@ namespace OnDuty
                             isDiffWeek = !isDiffWeek;
                     }
                 }
-                this.scheduleDates = models;
-                this.scheduleNoHoliDayDates = models.Where(x => x.dayType == "0").ToList();
+                this.scheduleDates = models ?? [];
+                this.scheduleNoHoliDayDates = (models ?? []).Where(x => x.dayType == "0").ToList();
             }
             catch (Exception ex)
             {
@@ -169,6 +172,8 @@ namespace OnDuty
         }
         private void CreatePersonViewList()
         {
+            lv_person.Items.Clear();
+            lv_person.Columns.Clear();
             if (persons?.Any() is true)
             {
                 lv_person.Columns.Add("姓名", 100);
@@ -274,6 +279,7 @@ namespace OnDuty
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     tb_InputHoliDay.Text = openFileDialog.FileName;
+                    this.btn_InputHoliDay_Click(this, EventArgs.Empty);
                 }
             }
         }
@@ -303,6 +309,8 @@ namespace OnDuty
 
             CreateDuty(persons ?? []);
             SaveSetting();
+            tb_SelectDateResult.Text = "";
+            tb_SelectPersonResult.Text = "";
             btn_ExportDutyResult.Visible = true;
         }
         private void CreateDuty(List<string> persons)
@@ -493,6 +501,7 @@ namespace OnDuty
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     tb_InputPerson.Text = openFileDialog.FileName;
+                    this.btn_InputPerson_Click(this, EventArgs.Empty);
                 }
             }
         }
@@ -506,7 +515,7 @@ namespace OnDuty
         private void btn_ClearSetting_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show(
-                "確定清除設定？",            // 訊息文字
+                "確定清除所有儲存設定？",            // 訊息文字
                 "確認",                 // 視窗標題
                 MessageBoxButtons.YesNo, // 按鈕樣式
                 MessageBoxIcon.Question  // 圖示
@@ -532,6 +541,24 @@ namespace OnDuty
             Properties.Settings.Default.counterFirst = chk_CounterFirst.Checked;
             Properties.Settings.Default.showHoliday = chk_ShowHoliDay.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void btn_Clear_Click(object sender, EventArgs e)
+        {
+            this.dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
+            this.scheduleDates = new List<ScheduleDate>();
+            this.scheduleNoHoliDayDates = new List<ScheduleDate>();
+            this.currentScheduleDates = new();
+            this.persons = new List<string>();
+            tb_CounterName.Text = "";
+            tb_InputHoliDay.Text = "";
+            tb_InputPerson.Text = "";
+            tb_SelectDateResult.Text = "";
+            tb_SelectPersonResult.Text = "";
+            tabDates.TabPages.Clear();
+            lv_person.Items.Clear();
+            lv_person.Columns.Clear();
+            btn_ExportDutyResult.Visible = false;
         }
     }
 }
