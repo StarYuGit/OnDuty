@@ -430,20 +430,30 @@ namespace OnDuty
                         // σ納材 2 
                         for (int c = 1; c <= lastCol; c++)
                         {
-                            // т硂逆材 2 程﹃
-                            int maxLen = 0;
-                            for (int r = 2; r <= lastRow; r++)
-                            {
-                                var val = worksheet1.Cell(r, c).GetString();
-                                if (!string.IsNullOrEmpty(val))
-                                {
-                                    // 计いゅ┪璣ゅ常璸
-                                    maxLen = Math.Max(maxLen, val.Length);
-                                }
-                            }
+                            //// т硂逆材 2 程﹃
+                            //int maxLen = 0;
+                            //for (int r = 2; r <= lastRow; r++)
+                            //{
+                            //    var val = worksheet1.Cell(r, c).GetString();
+                            //    if (!string.IsNullOrEmpty(val))
+                            //    {
+                            //        // 计いゅ┪璣ゅ常璸
+                            //        maxLen = Math.Max(maxLen, val.Length);
+                            //    }
+                            //}
 
-                            // 砞﹚糴计 * 1.5 + 肂丁禯
-                            worksheet1.Column(c).Width = maxLen * 1.5 + 2;
+                            //// 砞﹚糴计 * 1.5 + 肂丁禯
+                            //worksheet1.Column(c).Width = maxLen * 1.5 + 2;
+                            switch (c % 3) // ㏕﹚逆糴
+                            {
+                                case 2:
+                                    worksheet1.Column(c).Width = 4;
+                                    break;
+                                case 3:
+                                    worksheet1.Column(c).Width = 10;
+                                    break;
+
+                            }
                         }
                     }
 
