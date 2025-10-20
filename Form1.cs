@@ -311,6 +311,7 @@ namespace OnDuty
             SaveSetting();
             tb_SelectDateResult.Text = "";
             tb_SelectPersonResult.Text = "";
+            selectResult = "";
             btn_ExportDutyResult.Visible = true;
         }
         private void CreateDuty(List<string> persons)
@@ -381,10 +382,7 @@ namespace OnDuty
                         worksheet1.Cell(1, y).Value = month.TrimStart('0') + "月份";
                         worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                         worksheet1.Cell(1, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        if (chk_ShowHoliDay.Checked)
-                            worksheet1.Range(1, y, 1, y + 3).Merge();
-                        else
-                            worksheet1.Range(1, y, 1, y + 2).Merge();
+                        worksheet1.Range(1, y, 1, y + 2).Merge();
                         List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
                         foreach (ScheduleDate scheduleDate in scheduleDates)
                         {
@@ -404,12 +402,11 @@ namespace OnDuty
                                 worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Blue;
                             if (chk_ShowHoliDay.Checked)
                             {
-                                worksheet1.Cell(x, y + 3).Value = scheduleDate.remark;
-                                worksheet1.Cell(x, y + 3).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
                                 if ("2".Equals(scheduleDate.dayType))
                                 {
-                                    for (int i = y; i <= y + 3; i++)
+                                    worksheet1.Cell(x, y + 2).Value = scheduleDate.remark;
+                                    worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                    for (int i = y; i <= y + 2; i++)
                                     {
                                         worksheet1.Cell(x, i).Style.Font.FontColor = XLColor.Red;
                                     }
@@ -418,10 +415,7 @@ namespace OnDuty
 
                             x++;
                         }
-                        if (chk_ShowHoliDay.Checked)
-                            y += 4;
-                        else
-                            y += 3;
+                        y += 3;
                     }
                     // ===========================
                     // 手動計算每欄最長字元長度，並設定欄寬
