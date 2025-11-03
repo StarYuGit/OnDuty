@@ -82,5 +82,41 @@ namespace OnDuty.Properties {
                 this["showHoliday"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("休假,病假,事假")]
+        public string takeLeaveType {
+            get {
+                return ((string)(this["takeLeaveType"]));
+            }
+            set {
+                this["takeLeaveType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool chkExportDuty {
+            get {
+                return ((bool)(this["chkExportDuty"]));
+            }
+            set {
+                this["chkExportDuty"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool chkExportTakeLeave {
+            get {
+                return ((bool)(this["chkExportTakeLeave"]));
+            }
+            set {
+                this["chkExportTakeLeave"] = value;
+            }
+        }
     }
 }

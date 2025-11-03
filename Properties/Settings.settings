@@ -17,5 +17,14 @@
     <Setting Name="showHoliday" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="takeLeaveType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">休假,病假,事假</Value>
+    </Setting>
+    <Setting Name="chkExportDuty" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="chkExportTakeLeave" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

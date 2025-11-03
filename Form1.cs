@@ -1,6 +1,7 @@
-using ClosedXML.Excel;
+ï»¿using ClosedXML.Excel;
 using OnDuty.Models;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace OnDuty
 {
@@ -9,22 +10,23 @@ namespace OnDuty
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
         private List<ScheduleDate> currentScheduleDates = new();
-        private bool isDebug = false;
+        private bool isDebug = true;
         private bool isDuty = false;
         private List<string> persons = new List<string>();
         private Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
-        string selectResult = "";
+        private string selectResult = "";
+        private string year = "";
         public Form1()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.FixedSingle; // ©T©wÃä®Ø
-            this.MaximizeBox = false; // ¸T¥Î³Ì¤j¤Æ«ö¶s
-            lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718"); //¦bLabelLink¤W¥[¤J³sµ²
+            this.FormBorderStyle = FormBorderStyle.FixedSingle; // å›ºå®šé‚Šæ¡†
+            this.MaximizeBox = false; // ç¦ç”¨æœ€å¤§åŒ–æŒ‰éˆ•
+            lL_SchedulePage.Links.Add(0, lL_SchedulePage.Text.Length, "https://data.gov.tw/dataset/14718"); //åœ¨LabelLinkä¸ŠåŠ å…¥é€£çµ
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // ¸ü¤J®É§âSettingsªº­È±a¤J
+            // è¼‰å…¥æ™‚æŠŠSettingsçš„å€¼å¸¶å…¥
             tb_InputHoliDay.Text = Properties.Settings.Default.scheduleFilePath;
             tb_InputPerson.Text = Properties.Settings.Default.personFilePath;
             tb_CounterName.Text = Properties.Settings.Default.counterName;
@@ -73,7 +75,7 @@ namespace OnDuty
                 }
                 else
                 {
-                    MessageBox.Show("½Ğ¥ı¿ï¾Ü±Æ¯Z¤H­ûÀÉ®×");
+                    MessageBox.Show("è«‹å…ˆé¸æ“‡æ’ç­äººå“¡æª”æ¡ˆ");
                     return;
                 }
 
@@ -87,9 +89,15 @@ namespace OnDuty
         private void GetAllDateFromCSVFIle()
         {
             if (isDebug)
-                tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114¦~¤¤µØ¥Á°ê¬F©²¦æ¬F¾÷Ãö¿ì¤½¤é¾äªí(­×¥¿ª©).csv";
+                tb_InputHoliDay.Text = "C:\\Projects\\OnDuty\\114å¹´ä¸­è¯æ°‘åœ‹æ”¿åºœè¡Œæ”¿æ©Ÿé—œè¾¦å…¬æ—¥æ›†è¡¨(ä¿®æ­£ç‰ˆ).csv";
 
             string holidayFile = tb_InputHoliDay.Text;
+            if (!string.IsNullOrEmpty(holidayFile))
+            {
+                Match match = Regex.Match(holidayFile, @"\d+");
+                if (match.Success)
+                    year = match.Value;
+            }
 
             List<ScheduleDate> models = [];
             try
@@ -103,14 +111,14 @@ namespace OnDuty
                         int fullDate = 0;
                         while ((line = holiday.ReadLine()) != null)
                         {
-                            if ("¦è¤¸¤é´Á,¬P´Á,¬O§_©ñ°²,³Æµù".Equals(line))
+                            if ("è¥¿å…ƒæ—¥æœŸ,æ˜ŸæœŸ,æ˜¯å¦æ”¾å‡,å‚™è¨»".Equals(line))
                             {
                                 isWorkDayData = true;
                                 continue;
                             }
                             else if (isWorkDayData is false)
                             {
-                                MessageBox.Show("ÀÉ®×¿ù»~¡G\n½Ğ¤U¸ü¡uxxx¦~¤¤µØ¥Á°ê¬F©²¦æ¬F¾÷Ãö¿ì¤½¤é¾äªí¡v");
+                                MessageBox.Show("æª”æ¡ˆéŒ¯èª¤ï¼š\nè«‹ä¸‹è¼‰ã€Œxxxå¹´ä¸­è¯æ°‘åœ‹æ”¿åºœè¡Œæ”¿æ©Ÿé—œè¾¦å…¬æ—¥æ›†è¡¨ã€");
                                 return;
                             }
 
@@ -138,7 +146,7 @@ namespace OnDuty
                 }
                 else
                 {
-                    MessageBox.Show("½Ğ¥ı¿ï¾Ü¦æ¨Æ¾äÀÉ®×");
+                    MessageBox.Show("è«‹å…ˆé¸æ“‡è¡Œäº‹æ›†æª”æ¡ˆ");
                     return;
                 }
                 if (models?.Any() is true)
@@ -147,7 +155,7 @@ namespace OnDuty
                     foreach (ScheduleDate model in models)
                     {
                         model.isDiffWeek = isDiffWeek;
-                        if ("¤é".Equals(model.week))
+                        if ("æ—¥".Equals(model.week))
                             isDiffWeek = !isDiffWeek;
                     }
                 }
@@ -176,7 +184,7 @@ namespace OnDuty
             lv_person.Columns.Clear();
             if (persons?.Any() is true)
             {
-                lv_person.Columns.Add("©m¦W", 100);
+                lv_person.Columns.Add("å§“å", 100);
                 lv_person.FullRowSelect = true;
                 lv_person.GridLines = true;
                 List<ListViewItem> lviPoersons = new List<ListViewItem>();
@@ -198,7 +206,7 @@ namespace OnDuty
                 foreach (string month in dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                 {
                     TabPage tabPage = new TabPage();
-                    tabPage.Text = month.TrimStart('0') + "¤ë¥÷";
+                    tabPage.Text = month.TrimStart('0') + "æœˆä»½";
                     tabDates.Controls.Add(tabPage);
                     List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
                     ListView listView = new();
@@ -231,21 +239,21 @@ namespace OnDuty
                 }
             }
         }
-        //ªì©l¤ÆListView
+        //åˆå§‹åŒ–ListView
         private void InitListView(ListView listView)
         {
-            listView.Dock = DockStyle.Fill;     // Åı ListView ¥Rº¡¾ã­Ó TabPage
-            listView.View = View.Details;       // ¸Ô²Ó¸ê®Æ¼Ò¦¡
+            listView.Dock = DockStyle.Fill;     // è®“ ListView å……æ»¿æ•´å€‹ TabPage
+            listView.View = View.Details;       // è©³ç´°è³‡æ–™æ¨¡å¼
             listView.FullRowSelect = true;
             listView.GridLines = true;
-            listView.Columns.Add("¤é´Á", 70, HorizontalAlignment.Center);
+            listView.Columns.Add("æ—¥æœŸ", 70, HorizontalAlignment.Center);
             listView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView.Columns.Add("¬P´Á", 60, HorizontalAlignment.Center);
+            listView.Columns.Add("æ˜ŸæœŸ", 60, HorizontalAlignment.Center);
 
             if (isDuty)
-                listView.Columns.Add("­È¯Z¤H­û", 120);
+                listView.Columns.Add("å€¼ç­äººå“¡", 120);
             if (chk_ShowHoliDay.Checked)
-                listView.Columns.Add("³Æµù", 300);
+                listView.Columns.Add("å‚™è¨»", 300);
 
             listView.SelectedIndexChanged += (sender, e) => listView_SelectedIndexChanged(listView);
         }
@@ -256,7 +264,7 @@ namespace OnDuty
                 string[] tagType = ((listView.SelectedItems[0].Tag ?? new()).ToString() ?? "").Split(",");
                 if ("2".Equals(tagType[1]))
                 {
-                    MessageBox.Show("±Æ¯Z°_©l¤é¤£¥i¿ï¾Ü°²¤é¡C");
+                    MessageBox.Show("æ’ç­èµ·å§‹æ—¥ä¸å¯é¸æ“‡å‡æ—¥ã€‚");
                     tb_SelectDateResult.Text = "";
                     return;
                 }
@@ -273,8 +281,8 @@ namespace OnDuty
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Title = "½Ğ¿ï¾ÜÀÉ®×";
-                openFileDialog.Filter = "csvÀÉ (*.csv)|*.csv";
+                openFileDialog.Title = "è«‹é¸æ“‡æª”æ¡ˆ";
+                openFileDialog.Filter = "csvæª” (*.csv)|*.csv";
                 openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -288,12 +296,12 @@ namespace OnDuty
         {
             if (this.scheduleDates?.Any() is false)
             {
-                MessageBox.Show("©|¥¼¶×¤J¦æ¨Æ¾ä¸ê®Æ¡C");
+                MessageBox.Show("å°šæœªåŒ¯å…¥è¡Œäº‹æ›†è³‡æ–™ã€‚");
                 return;
             }
             if (this.persons?.Any() is false)
             {
-                MessageBox.Show("©|¥¼¶×¤J±Æ¯Z¤H­û¸ê®Æ¡C");
+                MessageBox.Show("å°šæœªåŒ¯å…¥æ’ç­äººå“¡è³‡æ–™ã€‚");
                 return;
             }
             isDuty = true;
@@ -364,115 +372,324 @@ namespace OnDuty
         {
             if (this.dicMonthAndScheduleDates.Count > 0)
             {
-                // «Ø¥ß Excel ÀÉ®×
-                using (var workbook = new XLWorkbook())
+                string message = string.Empty;
+                string fileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+                try
                 {
-
-                    var worksheet1 = workbook.Worksheets.Add("Âd»O½ü­Èªí");
-
-                    int y = 1;
-
-                    foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
+                    // å»ºç«‹ Excel æª”æ¡ˆ
+                    using (var workbook = new XLWorkbook())
                     {
-                        int x = 2;
-                        worksheet1.Style.Font.FontName = "¼Ğ·¢Åé";
-                        worksheet1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        worksheet1.Style.Font.FontSize = 12;
 
-                        worksheet1.Cell(1, y).Value = month.TrimStart('0') + "¤ë¥÷";
-                        worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        worksheet1.Cell(1, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        worksheet1.Range(1, y, 1, y + 2).Merge();
-                        List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
-                        foreach (ScheduleDate scheduleDate in scheduleDates)
+                        var worksheet1 = workbook.Worksheets.Add("æ«ƒè‡ºè¼ªå€¼è¡¨");
+
+                        int y = 1;
+
+                        foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                         {
-                            worksheet1.Cell(x, y).Value = (scheduleDate.month ?? "").TrimStart('0') + "¤ë" + (scheduleDate.day ?? "").TrimStart('0') + "¤é";
-                            worksheet1.Cell(x, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                            if (scheduleDate.isDiffWeek)
-                                worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightYellow;
-                            else
-                                worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightBlue;
+                            int x = 2;
+                            worksheet1.Style.Font.FontName = "æ¨™æ¥·é«”";
+                            worksheet1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Style.Font.FontSize = 12;
 
-                            worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
-                            worksheet1.Cell(x, y + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
-                            worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
-                            worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                            if (!string.IsNullOrEmpty(tb_CounterName.Text) && tb_CounterName.Text.Equals(scheduleDate.person))
-                                worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Blue;
-                            if (chk_ShowHoliDay.Checked)
+                            worksheet1.Cell(1, y).Value = month.TrimStart('0') + "æœˆä»½";
+                            worksheet1.Cell(1, y).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet1.Cell(1, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            worksheet1.Range(1, y, 1, y + 2).Merge();
+                            List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
+                            foreach (ScheduleDate scheduleDate in scheduleDates)
                             {
-                                if ("2".Equals(scheduleDate.dayType))
+                                worksheet1.Cell(x, y).Value = (scheduleDate.month ?? "").TrimStart('0') + "æœˆ" + (scheduleDate.day ?? "").TrimStart('0') + "æ—¥";
+                                worksheet1.Cell(x, y).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                if (scheduleDate.isDiffWeek)
+                                    worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightYellow;
+                                else
+                                    worksheet1.Cell(x, y).Style.Fill.BackgroundColor = XLColor.LightBlue;
+
+                                worksheet1.Cell(x, y + 1).Value = scheduleDate.week;
+                                worksheet1.Cell(x, y + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                                worksheet1.Cell(x, y + 2).Value = scheduleDate.person;
+                                worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                if (!string.IsNullOrEmpty(tb_CounterName.Text) && tb_CounterName.Text.Equals(scheduleDate.person))
+                                    worksheet1.Cell(x, y + 2).Style.Font.FontColor = XLColor.Blue;
+                                if (chk_ShowHoliDay.Checked)
                                 {
-                                    worksheet1.Cell(x, y + 2).Value = scheduleDate.remark;
-                                    worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                                    for (int i = y; i <= y + 2; i++)
+                                    if ("2".Equals(scheduleDate.dayType))
                                     {
-                                        worksheet1.Cell(x, i).Style.Font.FontColor = XLColor.Red;
+                                        worksheet1.Cell(x, y + 2).Value = scheduleDate.remark;
+                                        worksheet1.Cell(x, y + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                        for (int i = y; i <= y + 2; i++)
+                                        {
+                                            worksheet1.Cell(x, i).Style.Font.FontColor = XLColor.Red;
+                                        }
                                     }
                                 }
+
+                                x++;
                             }
-
-                            x++;
+                            y += 3;
                         }
-                        y += 3;
-                    }
-                    // ===========================
-                    // ¤â°Ê­pºâ¨CÄæ³Ìªø¦r¤¸ªø«×¡A¨Ã³]©wÄæ¼e
-                    // ===========================
+                        // ===========================
+                        // æ‰‹å‹•è¨ˆç®—æ¯æ¬„æœ€é•·å­—å…ƒé•·åº¦ï¼Œä¸¦è¨­å®šæ¬„å¯¬
+                        // ===========================
 
-                    var usedRange = worksheet1.RangeUsed();
-                    if (usedRange != null)
-                    {
-                        int lastRow = usedRange.LastRow().RowNumber();
-                        int lastCol = usedRange.LastColumn().ColumnNumber();
-
-                        // ¥u¦Ò¼{²Ä 2 ¦C¥H«á
-                        for (int c = 1; c <= lastCol; c++)
+                        var usedRange = worksheet1.RangeUsed();
+                        if (usedRange != null)
                         {
-                            //// §ä¥X³o¤@Äæ¡]²Ä 2 ¦C¥H«á¡^ªº³Ìªø¦r¦êªø«×
-                            //int maxLen = 0;
-                            //for (int r = 2; r <= lastRow; r++)
-                            //{
-                            //    var val = worksheet1.Cell(r, c).GetString();
-                            //    if (!string.IsNullOrEmpty(val))
-                            //    {
-                            //        // ¨ú¦r¼Æªø«×¡]¤¤¤å©Î­^¤å³£­p¡^
-                            //        maxLen = Math.Max(maxLen, val.Length);
-                            //    }
-                            //}
+                            int lastRow = usedRange.LastRow().RowNumber();
+                            int lastCol = usedRange.LastColumn().ColumnNumber();
 
-                            //// ³]©w¼e«×¡G¦r¼Æ * 1.5 + ÃB¥~¶¡¶Z
-                            //worksheet1.Column(c).Width = maxLen * 1.5 + 2;
-                            switch (c % 3) // ©T©wÄæ¼e
+                            // åªè€ƒæ…®ç¬¬ 2 åˆ—ä»¥å¾Œ
+                            for (int c = 1; c <= lastCol; c++)
                             {
-                                case 2:
-                                    worksheet1.Column(c).Width = 4;
-                                    break;
-                                case 3:
-                                    worksheet1.Column(c).Width = 10;
-                                    break;
+                                //// æ‰¾å‡ºé€™ä¸€æ¬„ï¼ˆç¬¬ 2 åˆ—ä»¥å¾Œï¼‰çš„æœ€é•·å­—ä¸²é•·åº¦
+                                //int maxLen = 0;
+                                //for (int r = 2; r <= lastRow; r++)
+                                //{
+                                //    var val = worksheet1.Cell(r, c).GetString();
+                                //    if (!string.IsNullOrEmpty(val))
+                                //    {
+                                //        // å–å­—æ•¸é•·åº¦ï¼ˆä¸­æ–‡æˆ–è‹±æ–‡éƒ½è¨ˆï¼‰
+                                //        maxLen = Math.Max(maxLen, val.Length);
+                                //    }
+                                //}
 
+                                //// è¨­å®šå¯¬åº¦ï¼šå­—æ•¸ * 1.5 + é¡å¤–é–“è·
+                                //worksheet1.Column(c).Width = maxLen * 1.5 + 2;
+                                switch (c % 3) // å›ºå®šæ¬„å¯¬
+                                {
+                                    case 2:
+                                        worksheet1.Column(c).Width = 4;
+                                        break;
+                                    case 3:
+                                        worksheet1.Column(c).Width = 10;
+                                        break;
+
+                                }
                             }
                         }
+
+                        var worksheet2 = workbook.Worksheets.Add("äººå“¡æ¸…å–®");
+
+                        for (int i = 0; i < persons.Count; i++)
+                        {
+                            worksheet2.Cell(i + 1, 1).Value = persons[i];
+                        }
+                        worksheet2.Style.Font.FontName = "æ¨™æ¥·é«”";
+                        worksheet2.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet2.Style.Font.FontSize = 12;
+                        string fileName1 = "ä¸€æ¨“æ«ƒå°ä¸­åˆå€¼ç­è¡¨-Y" + this.year + "_" + fileTime + ".xlsx";
+                        // å„²å­˜æª”æ¡ˆ
+                        workbook.SaveAs(fileName1);
+                        if (File.Exists(fileName1))
+                            message += "æª”æ¡ˆå·²å„²å­˜è‡³ï¼š" + Path.GetFullPath(fileName1) + Environment.NewLine;
+                        else
+                            message += fileName1 + this.year + "æª”æ¡ˆå„²å­˜å¤±æ•—ã€‚" + Environment.NewLine;
                     }
+                    #region MyRegion
+                    // å‡è¨­é€™è£¡æœ‰è³‡æ–™
+                    ws.Cell("A1").Value = "å“é …";
+                    ws.Cell("A2").Value = "è˜‹æœ";
+                    ws.Cell("A3").Value = "é¦™è•‰";
+                    ws.Cell("A4").Value = "æ©˜å­";
+                    // A5 ä¹‹å¾Œæ˜¯ç©ºç™½
 
-                    var worksheet2 = workbook.Worksheets.Add("¤H­û²M³æ");
+                    // ğŸ”¹ æ‰¾å‡º A æ¬„æœ€å¾Œä¸€å€‹æœ‰å€¼çš„å„²å­˜æ ¼
+                    var lastRow = ws.Column("A").LastCellUsed()?.Address.RowNumber ?? 1;
 
-                    for (int i = 0; i < persons.Count; i++)
+                    // ğŸ”¹ è‹¥å¤§æ–¼ç­‰æ–¼ 2ï¼Œå»ºç«‹ä¸‹æ‹‰æ¸…å–®ç¯„åœ A2 ~ æœ€å¾Œä¸€åˆ—
+                    if (lastRow >= 2)
                     {
-                        worksheet2.Cell(i + 1, 1).Value = persons[i];
+                        var range = ws.Range($"A2:A{lastRow}");
+                        var targetCell = ws.Cell("B1"); // ä¸‹æ‹‰é¸å–®æ”¾åœ¨ B1
+
+                        var dv = targetCell.CreateDataValidation();
+                        dv.AllowedValues = XLAllowedValues.List;
+                        dv.List(range);
+                        dv.InCellDropdown = true;
+                        dv.ShowErrorMessage = false; // è‹¥ä½ å…è¨±è¼¸å…¥è‡ªè¨‚å€¼
                     }
-                    worksheet2.Style.Font.FontName = "¼Ğ·¢Åé";
-                    worksheet2.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                    worksheet2.Style.Font.FontSize = 12;
-                    string fileName = "Âd»O½ü­Èªí_" + DateTime.Now.ToString("yyyyMMddhhmmss") + ".xlsx";
-                    // Àx¦sÀÉ®×
-                    workbook.SaveAs(fileName);
-                    if (File.Exists(fileName))
-                        MessageBox.Show("ÀÉ®×¤wÀx¦s¦Ü¡G" + Path.GetFullPath(fileName));
-                    else
-                        MessageBox.Show("ÀÉ®×Àx¦s¥¢±Ñ");
+                    #endregion
+
+                    MessageBox.Show(message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("åŒ¯å‡ºæª”æ¡ˆå‡ºç¾æœªé æœŸéŒ¯èª¤ï¼š" + ex.ToString());
+                }
+            }
+        }
+        private void btn_ExportTakeLeaveList_Click(object sender, EventArgs e)
+        {
+            ExportTakeLeaveList();
+        }
+        private void ExportTakeLeaveList()
+        {
+            if (this.dicMonthAndScheduleDates.Count > 0)
+            {
+                string message = string.Empty;
+                string fileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+                try
+                {
+                    // å»ºç«‹ Excel æª”æ¡ˆ
+
+                    using (var workbook = new XLWorkbook())
+                    {
+                        foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
+                        {
+                            //è¨­å®šSheet
+                            var worksheet = workbook.Worksheets.Add(month.TrimStart('0') + "æœˆ");
+                            worksheet.SheetView.Freeze(1, 2); //å‡çµçª—æ ¼
+                            worksheet.Style.Font.FontName = "æ¨™æ¥·é«”";
+                            worksheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            worksheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                            worksheet.Style.Font.FontSize = 12;
+
+                            //æ¨™é¡Œ
+                            worksheet.Cell(1, 1).Value = "æ—¥æœŸ";
+                            worksheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            worksheet.Column(1).Width = 8;
+                            worksheet.Cell(1, 2).Value = "æ˜ŸæœŸ/å‡æœŸ";
+                            worksheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                            worksheet.Column(2).Width = 10;
+                            int Columns = 10;
+                            int index = 1;
+                            for (int i = 1; i <= Columns * 2; i++)
+                            {
+                                worksheet.Cell(1, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                if (i % 2 == 1)
+                                {
+                                    worksheet.Cell(1, i + 2).Value = index;
+                                    worksheet.Column(i + 2).Width = 8;
+                                    index++;
+                                }
+                      
+                            }
+                            // æ—¥æœŸ
+                            List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
+                            int row = 2;
+                            
+                            foreach (ScheduleDate scheduleDate in scheduleDates)
+                            {
+                                worksheet.Cell(row, 1).Value = (scheduleDate.month ?? "").TrimStart('0') + "æœˆ" + (scheduleDate.day ?? "").TrimStart('0') + "æ—¥";
+                                worksheet.Cell(row, 1).Style.Border.OutsideBorder =  XLBorderStyleValues.Thin;
+                                worksheet.Cell(row, 2).Value = scheduleDate.week;
+                                worksheet.Cell(row, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                for (int i = 1; i <= Columns * 2; i++)
+                                {
+                                    worksheet.Cell(row, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                }
+
+                                if ("2".Equals(scheduleDate.dayType))
+                                {
+                                    if (chk_ShowHoliDay.Checked)
+                                    {
+                                        if (!string.IsNullOrEmpty(scheduleDate.remark))
+                                            worksheet.Cell(row, 3).Value = "ã€" + scheduleDate.remark + "ã€‘";
+                                        
+                                        for (int i = 1; i <= 3; i++)
+                                        {
+                                            worksheet.Cell(row, i).Style.Font.FontColor = XLColor.Red;
+                                            worksheet.Cell(row, i).Style.Fill.BackgroundColor = XLColor.LightGray;
+                                        }
+                                        worksheet.Range(row, 3, row, 2 + (Columns * 2)).Merge();
+                                    }
+                                }
+                                else
+                                {
+                                    for (int i = 1; i <= (Columns * 2) + 2; i += 2)
+                                    {
+                                        worksheet.Cell(row, i + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                        if (i > 2)
+                                        {
+                                            var cell = worksheet.Cell(row, i + 1);
+                                            cell.Value = "å‡åˆ¥";
+                                            var dv = cell.CreateDataValidation();
+                                            dv.AllowedValues = XLAllowedValues.List;        // è¨­ç‚º List å‹
+                                            dv.List("\"äº‹å‡,ç—…å‡,å…¬å‡º\"");
+                                            dv.InputTitle = "å‡åˆ¥é¸æ“‡";
+                                            dv.InputMessage = "è«‹å¾ä¸‹æ‹‰é¸å–®ä¸­é¸æ“‡";
+                                            dv.InCellDropdown = true;
+                                            dv.ShowErrorMessage = false;
+
+                                        }
+                           
+                                    }
+                                    row++;
+                                    for (int i = 1; i <= (Columns * 2) + 2; i += 2)
+                                    {
+                                        worksheet.Cell(row, i).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                        worksheet.Range(row, i, row, i + 1).Merge();
+                                    }
+                                    worksheet.Range(row - 1, 1, row, 1).Merge();
+                                    worksheet.Range(row - 1, 2, row, 2).Merge();
+                                }
+  
+                                row++;
+                            }
+                        }
+                        //åƒæ•¸é 
+                        var parameterWorkSheet = workbook.Worksheets.Add("åƒæ•¸é ");
+
+                        parameterWorkSheet.Style.Font.FontName = "æ¨™æ¥·é«”";
+                        parameterWorkSheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        parameterWorkSheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                        parameterWorkSheet.Style.Font.FontSize = 12;
+
+                       
+                        parameterWorkSheet.Cell(1, 1).Value = "è«‹å‡ç¨®é¡";
+                        parameterWorkSheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        parameterWorkSheet.Column(1).Width = 10;
+
+                        string taskLeaveTypeString = Properties.Settings.Default.takeLeaveType;
+                        if (!string.IsNullOrEmpty(taskLeaveTypeString))
+                        {
+                            List<string> taskLeaveTypes = taskLeaveTypeString.Split(",").ToList();
+                            if (taskLeaveTypes?.Any() is true)
+                            {
+                          
+                                List<XLColor> colors = new List<XLColor>()
+                                {
+                                    XLColor.Red,
+                                    XLColor.Green, 
+                                    XLColor.Blue,
+                                    XLColor.Yellow,
+                                    XLColor.Ochre,
+                                    XLColor.Purple,
+                                    XLColor.Orange,
+                                    XLColor.Gray,
+                                };
+                                for (int i = 0; i < taskLeaveTypes.Count; i++)
+                                {
+                                    parameterWorkSheet.Cell(i + 2, 1).Value = taskLeaveTypes[i];
+                                    parameterWorkSheet.Cell(i + 2, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                    parameterWorkSheet.Cell(i + 2, 1).Style.Font.FontColor = colors[i];
+                                }
+                             
+                            }   
+                        }
+
+                        parameterWorkSheet.Cell(1, 2).Value = "æ™‚æ®µé¸é …";
+                        parameterWorkSheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        parameterWorkSheet.Column(2).Width = 20;
+
+             
+
+              
+
+                        string fileName2 = "ç§‘å“¡è«‹å‡ç´€éŒ„-Y" + this.year + "_" + fileTime + ".xlsx";
+                        // å„²å­˜æª”æ¡ˆ
+                        workbook.SaveAs(fileName2);
+                        if (File.Exists(fileName2))
+                            message += "æª”æ¡ˆå·²å„²å­˜è‡³ï¼š" + Path.GetFullPath(fileName2) + Environment.NewLine;
+                        else
+                            message += fileName2 + this.year + "æª”æ¡ˆå„²å­˜å¤±æ•—ã€‚" + Environment.NewLine;
+                    }
+                    MessageBox.Show(message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("åŒ¯å‡ºæª”æ¡ˆå‡ºç¾æœªé æœŸéŒ¯èª¤ï¼š" + ex.ToString());
                 }
             }
         }
@@ -485,12 +702,12 @@ namespace OnDuty
             {
                 try
                 {
-                    // ¨Ï¥Î¹w³]ÂsÄı¾¹¶}±Ò³sµ²
+                    // ä½¿ç”¨é è¨­ç€è¦½å™¨é–‹å•Ÿé€£çµ
                     Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("µLªk¶}±Ò³sµ²: " + ex.Message);
+                    MessageBox.Show("ç„¡æ³•é–‹å•Ÿé€£çµ: " + ex.Message);
                 }
             }
         }
@@ -499,8 +716,8 @@ namespace OnDuty
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Title = "½Ğ¿ï¾ÜÀÉ®×";
-                openFileDialog.Filter = "txtÀÉ (*.txt)|*.txt";
+                openFileDialog.Title = "è«‹é¸æ“‡æª”æ¡ˆ";
+                openFileDialog.Filter = "txtæª” (*.txt)|*.txt";
                 openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -513,16 +730,16 @@ namespace OnDuty
         private void btn_SaveSetting_Click(object sender, EventArgs e)
         {
             SaveSetting();
-            MessageBox.Show("³]©w¤wÀx¦s");
+            MessageBox.Show("è¨­å®šå·²å„²å­˜");
         }
 
         private void btn_ClearSetting_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show(
-                "½T©w²M°£©Ò¦³Àx¦s³]©w¡H",            // °T®§¤å¦r
-                "½T»{",                 // µøµ¡¼ĞÃD
-                MessageBoxButtons.YesNo, // «ö¶s¼Ë¦¡
-                MessageBoxIcon.Question  // ¹Ï¥Ü
+                "ç¢ºå®šæ¸…é™¤æ‰€æœ‰å„²å­˜è¨­å®šï¼Ÿ",            // è¨Šæ¯æ–‡å­—
+                "ç¢ºèª",                 // è¦–çª—æ¨™é¡Œ
+                MessageBoxButtons.YesNo, // æŒ‰éˆ•æ¨£å¼
+                MessageBoxIcon.Question  // åœ–ç¤º
             );
 
             if (result == DialogResult.Yes)
@@ -534,7 +751,7 @@ namespace OnDuty
                 chk_ShowHoliDay.Checked = false;
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.Save();
-                MessageBox.Show("³]©w¤w²M°£");
+                MessageBox.Show("è¨­å®šå·²æ¸…é™¤");
             }
         }
         private void SaveSetting()
@@ -564,5 +781,7 @@ namespace OnDuty
             lv_person.Columns.Clear();
             btn_ExportDutyResult.Visible = false;
         }
+
+
     }
 }
