@@ -1,6 +1,8 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using OnDuty.Models;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Text.RegularExpressions;
 
 namespace OnDuty
@@ -486,31 +488,6 @@ namespace OnDuty
                         else
                             message += fileName1 + this.year + "檔案儲存失敗。" + Environment.NewLine;
                     }
-                    #region MyRegion
-                    // 假設這裡有資料
-                    ws.Cell("A1").Value = "品項";
-                    ws.Cell("A2").Value = "蘋果";
-                    ws.Cell("A3").Value = "香蕉";
-                    ws.Cell("A4").Value = "橘子";
-                    // A5 之後是空白
-
-                    // 🔹 找出 A 欄最後一個有值的儲存格
-                    var lastRow = ws.Column("A").LastCellUsed()?.Address.RowNumber ?? 1;
-
-                    // 🔹 若大於等於 2，建立下拉清單範圍 A2 ~ 最後一列
-                    if (lastRow >= 2)
-                    {
-                        var range = ws.Range($"A2:A{lastRow}");
-                        var targetCell = ws.Cell("B1"); // 下拉選單放在 B1
-
-                        var dv = targetCell.CreateDataValidation();
-                        dv.AllowedValues = XLAllowedValues.List;
-                        dv.List(range);
-                        dv.InCellDropdown = true;
-                        dv.ShowErrorMessage = false; // 若你允許輸入自訂值
-                    }
-                    #endregion
-
                     MessageBox.Show(message);
                 }
                 catch (Exception ex)
@@ -535,6 +512,10 @@ namespace OnDuty
 
                     using (var workbook = new XLWorkbook())
                     {
+                        CreateParameteWorkSheet(workbook); //建立參數頁
+                        IXLWorksheet ws = workbook.Worksheets.First();
+                        string takeLeaveTypeRange = GetDataRange(ws, "A", 2);
+                    
                         foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                         {
                             //設定Sheet
@@ -606,7 +587,8 @@ namespace OnDuty
                                             cell.Value = "假別";
                                             var dv = cell.CreateDataValidation();
                                             dv.AllowedValues = XLAllowedValues.List;        // 設為 List 型
-                                            dv.List("\"事假,病假,公出\"");
+                                            if (takeLeaveTypeRange != null)
+                                                dv.List(takeLeaveTypeRange);
                                             dv.InputTitle = "假別選擇";
                                             dv.InputMessage = "請從下拉選單中選擇";
                                             dv.InCellDropdown = true;
@@ -627,55 +609,11 @@ namespace OnDuty
   
                                 row++;
                             }
+                            
                         }
-                        //參數頁
-                        var parameterWorkSheet = workbook.Worksheets.Add("參數頁");
+                        ws.Position = workbook.Worksheets.Count; //參數頁放最後面
 
-                        parameterWorkSheet.Style.Font.FontName = "標楷體";
-                        parameterWorkSheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        parameterWorkSheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                        parameterWorkSheet.Style.Font.FontSize = 12;
 
-                       
-                        parameterWorkSheet.Cell(1, 1).Value = "請假種類";
-                        parameterWorkSheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        parameterWorkSheet.Column(1).Width = 10;
-
-                        string taskLeaveTypeString = Properties.Settings.Default.takeLeaveType;
-                        if (!string.IsNullOrEmpty(taskLeaveTypeString))
-                        {
-                            List<string> taskLeaveTypes = taskLeaveTypeString.Split(",").ToList();
-                            if (taskLeaveTypes?.Any() is true)
-                            {
-                          
-                                List<XLColor> colors = new List<XLColor>()
-                                {
-                                    XLColor.Red,
-                                    XLColor.Green, 
-                                    XLColor.Blue,
-                                    XLColor.Yellow,
-                                    XLColor.Ochre,
-                                    XLColor.Purple,
-                                    XLColor.Orange,
-                                    XLColor.Gray,
-                                };
-                                for (int i = 0; i < taskLeaveTypes.Count; i++)
-                                {
-                                    parameterWorkSheet.Cell(i + 2, 1).Value = taskLeaveTypes[i];
-                                    parameterWorkSheet.Cell(i + 2, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                                    parameterWorkSheet.Cell(i + 2, 1).Style.Font.FontColor = colors[i];
-                                }
-                             
-                            }   
-                        }
-
-                        parameterWorkSheet.Cell(1, 2).Value = "時段選項";
-                        parameterWorkSheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        parameterWorkSheet.Column(2).Width = 20;
-
-             
-
-              
 
                         string fileName2 = "科員請假紀錄-Y" + this.year + "_" + fileTime + ".xlsx";
                         // 儲存檔案
@@ -692,6 +630,73 @@ namespace OnDuty
                     MessageBox.Show("匯出檔案出現未預期錯誤：" + ex.ToString());
                 }
             }
+        }
+        /// <summary>
+        /// 建立參數頁
+        /// </summary>
+        /// <param name="wb"></param>
+        private void CreateParameteWorkSheet(IXLWorkbook wb)
+        {
+            //參數頁
+            var parameterWorkSheet = wb.Worksheets.Add("參數頁");
+
+            parameterWorkSheet.Style.Font.FontName = "標楷體";
+            parameterWorkSheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            parameterWorkSheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            parameterWorkSheet.Style.Font.FontSize = 12;
+
+
+            parameterWorkSheet.Cell(1, 1).Value = "請假種類";
+            parameterWorkSheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            parameterWorkSheet.Column(1).Width = 10;
+
+            string taskLeaveTypeString = Properties.Settings.Default.takeLeaveType;
+            if (!string.IsNullOrEmpty(taskLeaveTypeString))
+            {
+                List<string> taskLeaveTypes = taskLeaveTypeString.Split(",").ToList();
+                if (taskLeaveTypes?.Any() is true)
+                {
+
+                    List<XLColor> colors = new List<XLColor>()
+                                {
+                                    XLColor.Red,
+                                    XLColor.Green,
+                                    XLColor.Blue,
+                                    XLColor.Yellow,
+                                    XLColor.Ochre,
+                                    XLColor.Purple,
+                                    XLColor.Orange,
+                                    XLColor.Gray,
+                                };
+                    for (int i = 0; i < taskLeaveTypes.Count; i++)
+                    {
+                        parameterWorkSheet.Cell(i + 2, 1).Value = taskLeaveTypes[i];
+                        parameterWorkSheet.Cell(i + 2, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        parameterWorkSheet.Cell(i + 2, 1).Style.Font.FontColor = colors[i];
+                    }
+
+                }
+            }
+
+            parameterWorkSheet.Cell(1, 2).Value = "時段選項";
+            parameterWorkSheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            parameterWorkSheet.Column(2).Width = 20;
+
+        }
+        private string GetDataRange(IXLWorksheet ws, string column, int rowStartNumber = 0)
+        {
+            string? range = "";
+ 
+            List<string> values = ws.Range($"{column}{rowStartNumber}:{column}100")
+                .Cells()
+                .Where(c => !string.IsNullOrWhiteSpace(c.GetString()))
+                .Select(c => c.GetString())
+                .ToList();
+            if (values?.Any() is true)
+                range = "\"" + string.Join(",", values) + "\"";
+
+            // 若需要回傳 Range 型別，請根據實際需求調整
+            return range;
         }
 
         private void lL_SchedulePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
