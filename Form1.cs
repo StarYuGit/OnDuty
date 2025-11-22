@@ -1,8 +1,6 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using OnDuty.Models;
 using System.Diagnostics;
-using System.Drawing.Text;
 using System.Text.RegularExpressions;
 
 namespace OnDuty
@@ -496,11 +494,15 @@ namespace OnDuty
                 }
             }
         }
-        private void btn_ExportTakeLeaveList_Click(object sender, EventArgs e)
+        private void btn_OpenTakeLeaveSettingForm_Click(object sender, EventArgs e)
         {
-            ExportTakeLeaveList();
+            using (TakeLeaveSettingsForm takeLeaveSettingForm = new TakeLeaveSettingsForm())
+            {
+                takeLeaveSettingForm.ShowDialog();
+            }
+            //ExportTakeLeaveList(5);
         }
-        private void ExportTakeLeaveList()
+        private void ExportTakeLeaveList(int columns)
         {
             if (this.dicMonthAndScheduleDates.Count > 0)
             {
@@ -509,13 +511,13 @@ namespace OnDuty
                 try
                 {
                     // 建立 Excel 檔案
-
                     using (var workbook = new XLWorkbook())
                     {
                         CreateParameteWorkSheet(workbook); //建立參數頁
                         IXLWorksheet ws = workbook.Worksheets.First();
-                        string takeLeaveTypeRange = GetDataRange(ws, "A", 2);
-                    
+                        IXLRange? takeLeaveTypeRange = GetDataRange(ws, "A", 2, 100);
+                        IXLRange? takeLeaveTimePeriodsTypeRange = GetDataRange(ws, "B", 2, 100);
+
                         foreach (string month in this.dicMonthAndScheduleDates.Keys.OrderBy(x => x))
                         {
                             //設定Sheet
@@ -524,39 +526,42 @@ namespace OnDuty
                             worksheet.Style.Font.FontName = "標楷體";
                             worksheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                             worksheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                            worksheet.Style.Font.FontSize = 12;
+                            worksheet.Style.Font.FontSize = 14;
 
                             //標題
                             worksheet.Cell(1, 1).Value = "日期";
-                            worksheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                            worksheet.Column(1).Width = 8;
+                            worksheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                            worksheet.Column(1).Width = 10;
                             worksheet.Cell(1, 2).Value = "星期/假期";
-                            worksheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                            worksheet.Column(2).Width = 10;
-                            int Columns = 10;
+                            worksheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                            worksheet.Column(2).Width = 14;
+
                             int index = 1;
-                            for (int i = 1; i <= Columns * 2; i++)
+                            for (int i = 1; i <= columns * 2; i++)
                             {
                                 worksheet.Cell(1, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                                 if (i % 2 == 1)
                                 {
                                     worksheet.Cell(1, i + 2).Value = index;
-                                    worksheet.Column(i + 2).Width = 8;
+                                    var indexTitleRange = worksheet.Range(1, i + 2, 1, i + 3);
+                                    indexTitleRange.Merge();
+                                    indexTitleRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                    worksheet.Column(i + 2).Width = 15; //每個請假格寬度
                                     index++;
                                 }
-                      
                             }
                             // 日期
                             List<ScheduleDate> scheduleDates = dicMonthAndScheduleDates[month];
                             int row = 2;
-                            
+
                             foreach (ScheduleDate scheduleDate in scheduleDates)
                             {
                                 worksheet.Cell(row, 1).Value = (scheduleDate.month ?? "").TrimStart('0') + "月" + (scheduleDate.day ?? "").TrimStart('0') + "日";
-                                worksheet.Cell(row, 1).Style.Border.OutsideBorder =  XLBorderStyleValues.Thin;
                                 worksheet.Cell(row, 2).Value = scheduleDate.week;
-                                worksheet.Cell(row, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                                for (int i = 1; i <= Columns * 2; i++)
+                                worksheet.Cell(row, 2).Style.Font.FontSize = 16;
+                                worksheet.Cell(row, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                worksheet.Cell(row, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                for (int i = 1; i <= columns * 2; i++)
                                 {
                                     worksheet.Cell(row, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                                 }
@@ -567,53 +572,70 @@ namespace OnDuty
                                     {
                                         if (!string.IsNullOrEmpty(scheduleDate.remark))
                                             worksheet.Cell(row, 3).Value = "【" + scheduleDate.remark + "】";
-                                        
+
                                         for (int i = 1; i <= 3; i++)
                                         {
                                             worksheet.Cell(row, i).Style.Font.FontColor = XLColor.Red;
                                             worksheet.Cell(row, i).Style.Fill.BackgroundColor = XLColor.LightGray;
                                         }
-                                        worksheet.Range(row, 3, row, 2 + (Columns * 2)).Merge();
+                                        worksheet.Range(row, 3, row, 2 + (columns * 2)).Merge();
                                     }
                                 }
                                 else
                                 {
-                                    for (int i = 1; i <= (Columns * 2) + 2; i += 2)
+                                    worksheet.Row(row).Height = 30; //工作日行高度
+                                    for (int i = 1; i <= (columns * 2) + 2; i += 2)
                                     {
                                         worksheet.Cell(row, i + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                        //每日主格
                                         if (i > 2)
                                         {
-                                            var cell = worksheet.Cell(row, i + 1);
-                                            cell.Value = "假別";
-                                            var dv = cell.CreateDataValidation();
-                                            dv.AllowedValues = XLAllowedValues.List;        // 設為 List 型
+                                            //姓名區塊
+                                            var takeLeavePerson = worksheet.Cell(row, i);
+                                            takeLeavePerson.Style.Font.FontColor = XLColor.Blue;
+                                            takeLeavePerson.Style.Font.FontSize = 14;
+                                            //假別區塊
+                                            var takeLeaveTypeCell = worksheet.Cell(row, i + 1);
+                                            takeLeaveTypeCell.Value = "";
+                                            var dv_TakeLeaveType = takeLeaveTypeCell.CreateDataValidation();
+                                            dv_TakeLeaveType.AllowedValues = XLAllowedValues.List;        // 設為 List 型
                                             if (takeLeaveTypeRange != null)
-                                                dv.List(takeLeaveTypeRange);
-                                            dv.InputTitle = "假別選擇";
-                                            dv.InputMessage = "請從下拉選單中選擇";
-                                            dv.InCellDropdown = true;
-                                            dv.ShowErrorMessage = false;
-
+                                                dv_TakeLeaveType.List(takeLeaveTypeRange);
+                                            dv_TakeLeaveType.InputTitle = "假別選擇";
+                                            dv_TakeLeaveType.InputMessage = "請從下拉選單中選擇";
+                                            dv_TakeLeaveType.InCellDropdown = true;
+                                            dv_TakeLeaveType.ShowErrorMessage = false;
                                         }
-                           
                                     }
                                     row++;
-                                    for (int i = 1; i <= (Columns * 2) + 2; i += 2)
+                                    //每日次格區塊
+                                    worksheet.Cell(row, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                    worksheet.Cell(row, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                    for (int i = 3; i <= (columns * 2) + 2; i += 2)
                                     {
-                                        worksheet.Cell(row, i).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                        //請假時段區塊
+                                        var takeLeaveTimePeriodCell = worksheet.Cell(row, i);
+                                        //takeLeaveTimePeriodCell.Value = "整天(08:50～17:00)";
+                                        var dv_takeLeaveTimePeriod = takeLeaveTimePeriodCell.CreateDataValidation();
+                                        dv_takeLeaveTimePeriod.AllowedValues = XLAllowedValues.List;
+                                        if (takeLeaveTimePeriodsTypeRange != null)
+                                            dv_takeLeaveTimePeriod.List(takeLeaveTimePeriodsTypeRange);
+                                        dv_takeLeaveTimePeriod.InputTitle = "選擇請假時間";
+                                        dv_takeLeaveTimePeriod.InputMessage = "請從下拉選單中選擇";
+                                        dv_takeLeaveTimePeriod.InCellDropdown = true;
+                                        dv_takeLeaveTimePeriod.ShowErrorMessage = false;
                                         worksheet.Range(row, i, row, i + 1).Merge();
+
+                                        worksheet.Range(row - 1, i, row, i + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
                                     }
                                     worksheet.Range(row - 1, 1, row, 1).Merge();
                                     worksheet.Range(row - 1, 2, row, 2).Merge();
                                 }
-  
                                 row++;
                             }
-                            
+
                         }
-                        ws.Position = workbook.Worksheets.Count; //參數頁放最後面
-
-
+                        ws.Position = workbook.Worksheets.Count; //參數頁移到最後面
 
                         string fileName2 = "科員請假紀錄-Y" + this.year + "_" + fileTime + ".xlsx";
                         // 儲存檔案
@@ -656,44 +678,36 @@ namespace OnDuty
                 List<string> taskLeaveTypes = taskLeaveTypeString.Split(",").ToList();
                 if (taskLeaveTypes?.Any() is true)
                 {
-
-                    List<XLColor> colors = new List<XLColor>()
-                                {
-                                    XLColor.Red,
-                                    XLColor.Green,
-                                    XLColor.Blue,
-                                    XLColor.Yellow,
-                                    XLColor.Ochre,
-                                    XLColor.Purple,
-                                    XLColor.Orange,
-                                    XLColor.Gray,
-                                };
                     for (int i = 0; i < taskLeaveTypes.Count; i++)
                     {
                         parameterWorkSheet.Cell(i + 2, 1).Value = taskLeaveTypes[i];
-                        parameterWorkSheet.Cell(i + 2, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        parameterWorkSheet.Cell(i + 2, 1).Style.Font.FontColor = colors[i];
                     }
-
                 }
             }
 
             parameterWorkSheet.Cell(1, 2).Value = "時段選項";
-            parameterWorkSheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            //parameterWorkSheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             parameterWorkSheet.Column(2).Width = 20;
-
+            string takeLeaveTimePeriodsString = Properties.Settings.Default.takeLeaveTimePeriodsType;
+            if (!string.IsNullOrEmpty(takeLeaveTimePeriodsString))
+            {
+                List<string> takeLeaveTimePeriods = takeLeaveTimePeriodsString.Split(",").ToList();
+                if (takeLeaveTimePeriods?.Any() is true)
+                {
+                    for (int i = 0; i < takeLeaveTimePeriods.Count; i++)
+                    {
+                        parameterWorkSheet.Cell(i + 2, 2).Value = takeLeaveTimePeriods[i];
+                    }
+                    return;
+                }
+            }
         }
-        private string GetDataRange(IXLWorksheet ws, string column, int rowStartNumber = 0)
+        private IXLRange? GetDataRange(IXLWorksheet ws, string column, int rowStartNumber, int rowEndNumber)
         {
-            string? range = "";
- 
-            List<string> values = ws.Range($"{column}{rowStartNumber}:{column}100")
-                .Cells()
-                .Where(c => !string.IsNullOrWhiteSpace(c.GetString()))
-                .Select(c => c.GetString())
-                .ToList();
-            if (values?.Any() is true)
-                range = "\"" + string.Join(",", values) + "\"";
+            IXLRange? range = null;
+
+            range = ws.Range($"{column}{rowStartNumber}:{column}{rowEndNumber}");
+
 
             // 若需要回傳 Range 型別，請根據實際需求調整
             return range;

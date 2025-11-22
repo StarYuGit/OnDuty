@@ -118,5 +118,29 @@ namespace OnDuty.Properties {
                 this["chkExportTakeLeave"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("整天(08:50～17:00),上午(08:50～13:00),下午(13:00～17:00)")]
+        public string takeLeaveTimePeriodsType {
+            get {
+                return ((string)(this["takeLeaveTimePeriodsType"]));
+            }
+            set {
+                this["takeLeaveTimePeriodsType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int takeLeaveNumber {
+            get {
+                return ((int)(this["takeLeaveNumber"]));
+            }
+            set {
+                this["takeLeaveNumber"] = value;
+            }
+        }
     }
 }
