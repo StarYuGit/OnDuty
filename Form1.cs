@@ -32,6 +32,8 @@ namespace OnDuty
             tb_CounterName.Text = Properties.Settings.Default.counterName;
             chk_CounterFirst.Checked = Properties.Settings.Default.counterFirst;
             chk_ShowHoliDay.Checked = Properties.Settings.Default.showHoliday;
+            cb_ExportDuty.Checked = Properties.Settings.Default.cb_ExportDuty;
+            cb_ExportTakeLeave.Checked = Properties.Settings.Default.cb_ExportTakeLeave;
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
@@ -365,14 +367,29 @@ namespace OnDuty
 
         private void btn_ExportDutyResult_Click(object sender, EventArgs e)
         {
-            ExportDutyResult();
+            bool check = false;
+            string message = String.Empty;
+            if (cb_ExportDuty.Checked)
+            {
+                check = true;
+                message = ExportDutyResult();
+            }
+            if (cb_ExportTakeLeave.Checked)
+            {
+                check = true;
+                message += ExportTakeLeaveList(Set);
+            }
+            if (!check)
+                MessageBox.Show("請至少選擇一個要輸出的檔案");
+            else
+                MessageBox.Show(message);
         }
 
-        private void ExportDutyResult()
+        private string ExportDutyResult()
         {
+            string message = string.Empty;
             if (this.dicMonthAndScheduleDates.Count > 0)
             {
-                string message = string.Empty;
                 string fileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
                 try
                 {
@@ -486,13 +503,13 @@ namespace OnDuty
                         else
                             message += fileName1 + this.year + "檔案儲存失敗。" + Environment.NewLine;
                     }
-                    MessageBox.Show(message);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("匯出檔案出現未預期錯誤：" + ex.ToString());
+                    message = "匯出檔案出現未預期錯誤：" + ex.ToString();
                 }
             }
+            return message;
         }
         private void btn_OpenTakeLeaveSettingForm_Click(object sender, EventArgs e)
         {
@@ -500,13 +517,13 @@ namespace OnDuty
             {
                 takeLeaveSettingForm.ShowDialog();
             }
-            //ExportTakeLeaveList(5);
+
         }
-        private void ExportTakeLeaveList(int columns)
+        private string ExportTakeLeaveList(int columns)
         {
+            string message = string.Empty;
             if (this.dicMonthAndScheduleDates.Count > 0)
             {
-                string message = string.Empty;
                 string fileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
                 try
                 {
@@ -645,13 +662,13 @@ namespace OnDuty
                         else
                             message += fileName2 + this.year + "檔案儲存失敗。" + Environment.NewLine;
                     }
-                    MessageBox.Show(message);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("匯出檔案出現未預期錯誤：" + ex.ToString());
+                    message = "匯出檔案出現未預期錯誤：" + ex.ToString();
                 }
             }
+            return message;
         }
         /// <summary>
         /// 建立參數頁
@@ -766,6 +783,8 @@ namespace OnDuty
                 tb_InputHoliDay.Text = "";
                 tb_InputPerson.Text = "";
                 tb_CounterName.Text = "";
+                cb_ExportDuty.Checked = false;
+                cb_ExportTakeLeave.Checked = false;
                 chk_CounterFirst.Checked = false;
                 chk_ShowHoliDay.Checked = false;
                 Properties.Settings.Default.Reset();
@@ -780,6 +799,8 @@ namespace OnDuty
             Properties.Settings.Default.counterName = tb_CounterName.Text;
             Properties.Settings.Default.counterFirst = chk_CounterFirst.Checked;
             Properties.Settings.Default.showHoliday = chk_ShowHoliDay.Checked;
+            Properties.Settings.Default.cb_ExportDuty = cb_ExportDuty.Checked;
+            Properties.Settings.Default.cb_ExportTakeLeave = cb_ExportTakeLeave.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -799,8 +820,12 @@ namespace OnDuty
             lv_person.Items.Clear();
             lv_person.Columns.Clear();
             btn_ExportDutyResult.Visible = false;
-        }
 
+        }
+        private void ClearSettings()
+        {
+
+        }
 
     }
 }

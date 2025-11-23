@@ -142,5 +142,29 @@ namespace OnDuty.Properties {
                 this["takeLeaveNumber"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool cb_ExportDuty {
+            get {
+                return ((bool)(this["cb_ExportDuty"]));
+            }
+            set {
+                this["cb_ExportDuty"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool cb_ExportTakeLeave {
+            get {
+                return ((bool)(this["cb_ExportTakeLeave"]));
+            }
+            set {
+                this["cb_ExportTakeLeave"] = value;
+            }
+        }
     }
 }
