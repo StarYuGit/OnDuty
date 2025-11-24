@@ -32,8 +32,8 @@ namespace OnDuty
             tb_CounterName.Text = Properties.Settings.Default.counterName;
             chk_CounterFirst.Checked = Properties.Settings.Default.counterFirst;
             chk_ShowHoliDay.Checked = Properties.Settings.Default.showHoliday;
-            cb_ExportDuty.Checked = Properties.Settings.Default.cb_ExportDuty;
-            cb_ExportTakeLeave.Checked = Properties.Settings.Default.cb_ExportTakeLeave;
+            //chk_ExportDuty.Checked = Properties.Settings.Default.chkExportDuty;
+            //chk_ExportTakeLeave.Checked = Properties.Settings.Default.chkExportTakeLeave;
         }
 
         private void btn_InputHoliDay_Click(object sender, EventArgs e)
@@ -369,15 +369,15 @@ namespace OnDuty
         {
             bool check = false;
             string message = String.Empty;
-            if (cb_ExportDuty.Checked)
+            if (chk_ExportDuty.Checked && isDuty)
             {
                 check = true;
                 message = ExportDutyResult();
             }
-            if (cb_ExportTakeLeave.Checked)
+            if (chk_ExportTakeLeave.Checked && this.currentScheduleDates?.Any() is true)
             {
                 check = true;
-                message += ExportTakeLeaveList(Set);
+                message += ExportTakeLeaveList(Properties.Settings.Default.takeLeaveNumber);
             }
             if (!check)
                 MessageBox.Show("請至少選擇一個要輸出的檔案");
@@ -783,8 +783,8 @@ namespace OnDuty
                 tb_InputHoliDay.Text = "";
                 tb_InputPerson.Text = "";
                 tb_CounterName.Text = "";
-                cb_ExportDuty.Checked = false;
-                cb_ExportTakeLeave.Checked = false;
+                chk_ExportDuty.Checked = false;
+                chk_ExportTakeLeave.Checked = false;
                 chk_CounterFirst.Checked = false;
                 chk_ShowHoliDay.Checked = false;
                 Properties.Settings.Default.Reset();
@@ -799,8 +799,8 @@ namespace OnDuty
             Properties.Settings.Default.counterName = tb_CounterName.Text;
             Properties.Settings.Default.counterFirst = chk_CounterFirst.Checked;
             Properties.Settings.Default.showHoliday = chk_ShowHoliDay.Checked;
-            Properties.Settings.Default.cb_ExportDuty = cb_ExportDuty.Checked;
-            Properties.Settings.Default.cb_ExportTakeLeave = cb_ExportTakeLeave.Checked;
+            //Properties.Settings.Default.chkExportDuty = chk_ExportDuty.Checked;
+            //Properties.Settings.Default.chkExportTakeLeave = chk_ExportTakeLeave.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -811,6 +811,7 @@ namespace OnDuty
             this.scheduleNoHoliDayDates = new List<ScheduleDate>();
             this.currentScheduleDates = new();
             this.persons = new List<string>();
+            this.isDuty = false;
             tb_CounterName.Text = "";
             tb_InputHoliDay.Text = "";
             tb_InputPerson.Text = "";
@@ -820,12 +821,42 @@ namespace OnDuty
             lv_person.Items.Clear();
             lv_person.Columns.Clear();
             btn_ExportDutyResult.Visible = false;
-
+            chk_ExportDuty.Checked = false;
+            chk_ExportTakeLeave.Checked = false;
         }
-        private void ClearSettings()
+
+        private void chk_ExportTakeLeave_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (currentScheduleDates?.Any() is true)
+            {
+                if (chk_ExportTakeLeave.Checked)
+                    btn_ExportDutyResult.Visible = true;
+                else
+                {
+                    if (isDuty is false)
+                        btn_ExportDutyResult.Visible = false;
+                }
+            }
+            else
+            {
+                if (chk_ExportTakeLeave.Checked)
+                    MessageBox.Show("請先匯入行事曆");
+                
+            }
+                
         }
 
+        private void chk_ExportDuty_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isDuty)
+                btn_ExportDutyResult.Visible = true;
+            else
+            {
+                if (chk_ExportDuty.Checked)
+                    MessageBox.Show("請先執行排班");
+                
+            }
+                
+        }
     }
 }
