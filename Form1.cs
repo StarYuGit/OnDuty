@@ -10,7 +10,7 @@ namespace OnDuty
         private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
         private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
         private List<ScheduleDate> currentScheduleDates = new();
-        private bool isDebug = true;
+        private bool isDebug = false;
         private bool isDuty = false;
         private List<string> persons = new List<string>();
         private Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
