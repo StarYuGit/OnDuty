@@ -85,7 +85,7 @@ namespace OnDuty.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("休假,病假,事假")]
+        [global::System.Configuration.DefaultSettingValueAttribute("休假,補休,公出")]
         public string takeLeaveType {
             get {
                 return ((string)(this["takeLeaveType"]));
@@ -133,7 +133,7 @@ namespace OnDuty.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int takeLeaveNumber {
             get {
                 return ((int)(this["takeLeaveNumber"]));

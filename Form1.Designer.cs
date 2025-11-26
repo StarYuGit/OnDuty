@@ -68,27 +68,27 @@
             // lb_InputHoliDay
             // 
             lb_InputHoliDay.AutoSize = true;
-            lb_InputHoliDay.Location = new Point(42, 120);
-            lb_InputHoliDay.Margin = new Padding(6, 0, 6, 0);
+            lb_InputHoliDay.Location = new Point(27, 76);
+            lb_InputHoliDay.Margin = new Padding(4, 0, 4, 0);
             lb_InputHoliDay.Name = "lb_InputHoliDay";
-            lb_InputHoliDay.Size = new Size(216, 30);
+            lb_InputHoliDay.Size = new Size(136, 19);
             lb_InputHoliDay.TabIndex = 0;
             lb_InputHoliDay.Text = "匯入行事例csv檔：";
             // 
             // tb_InputHoliDay
             // 
-            tb_InputHoliDay.Location = new Point(266, 114);
-            tb_InputHoliDay.Margin = new Padding(6, 6, 6, 6);
+            tb_InputHoliDay.Location = new Point(171, 72);
+            tb_InputHoliDay.Margin = new Padding(4, 4, 4, 4);
             tb_InputHoliDay.Name = "tb_InputHoliDay";
-            tb_InputHoliDay.Size = new Size(974, 38);
+            tb_InputHoliDay.Size = new Size(628, 27);
             tb_InputHoliDay.TabIndex = 1;
             // 
             // btn_InputHoliDay
             // 
-            btn_InputHoliDay.Location = new Point(1098, 180);
-            btn_InputHoliDay.Margin = new Padding(6, 6, 6, 6);
+            btn_InputHoliDay.Location = new Point(706, 114);
+            btn_InputHoliDay.Margin = new Padding(4, 4, 4, 4);
             btn_InputHoliDay.Name = "btn_InputHoliDay";
-            btn_InputHoliDay.Size = new Size(148, 46);
+            btn_InputHoliDay.Size = new Size(95, 29);
             btn_InputHoliDay.TabIndex = 2;
             btn_InputHoliDay.Text = "匯入";
             btn_InputHoliDay.UseVisualStyleBackColor = true;
@@ -97,19 +97,19 @@
             // lb_InputPerson
             // 
             lb_InputPerson.AutoSize = true;
-            lb_InputPerson.Location = new Point(42, 250);
-            lb_InputPerson.Margin = new Padding(6, 0, 6, 0);
+            lb_InputPerson.Location = new Point(27, 158);
+            lb_InputPerson.Margin = new Padding(4, 0, 4, 0);
             lb_InputPerson.Name = "lb_InputPerson";
-            lb_InputPerson.Size = new Size(205, 30);
+            lb_InputPerson.Size = new Size(129, 19);
             lb_InputPerson.TabIndex = 3;
             lb_InputPerson.Text = "匯入排班人名單：";
             // 
             // btn_InputPerson
             // 
-            btn_InputPerson.Location = new Point(1098, 318);
-            btn_InputPerson.Margin = new Padding(6, 6, 6, 6);
+            btn_InputPerson.Location = new Point(706, 201);
+            btn_InputPerson.Margin = new Padding(4, 4, 4, 4);
             btn_InputPerson.Name = "btn_InputPerson";
-            btn_InputPerson.Size = new Size(148, 46);
+            btn_InputPerson.Size = new Size(95, 29);
             btn_InputPerson.TabIndex = 4;
             btn_InputPerson.Text = "匯入";
             btn_InputPerson.UseVisualStyleBackColor = true;
@@ -117,47 +117,47 @@
             // 
             // tb_InputPerson
             // 
-            tb_InputPerson.Location = new Point(268, 244);
-            tb_InputPerson.Margin = new Padding(6, 6, 6, 6);
+            tb_InputPerson.Location = new Point(172, 155);
+            tb_InputPerson.Margin = new Padding(4, 4, 4, 4);
             tb_InputPerson.Name = "tb_InputPerson";
-            tb_InputPerson.Size = new Size(974, 38);
+            tb_InputPerson.Size = new Size(628, 27);
             tb_InputPerson.TabIndex = 5;
             // 
             // lb_CounterName
             // 
             lb_CounterName.AutoSize = true;
-            lb_CounterName.Location = new Point(42, 324);
-            lb_CounterName.Margin = new Padding(6, 0, 6, 0);
+            lb_CounterName.Location = new Point(27, 205);
+            lb_CounterName.Margin = new Padding(4, 0, 4, 0);
             lb_CounterName.Name = "lb_CounterName";
-            lb_CounterName.Size = new Size(133, 30);
+            lb_CounterName.Size = new Size(84, 19);
             lb_CounterName.TabIndex = 6;
             lb_CounterName.Text = "櫃台人員：";
             // 
             // tb_CounterName
             // 
-            tb_CounterName.Location = new Point(268, 318);
-            tb_CounterName.Margin = new Padding(6, 6, 6, 6);
+            tb_CounterName.Location = new Point(172, 201);
+            tb_CounterName.Margin = new Padding(4, 4, 4, 4);
             tb_CounterName.Name = "tb_CounterName";
-            tb_CounterName.Size = new Size(196, 38);
+            tb_CounterName.Size = new Size(127, 27);
             tb_CounterName.TabIndex = 7;
             // 
             // lb_SelectDate
             // 
             lb_SelectDate.AutoSize = true;
-            lb_SelectDate.Location = new Point(42, 396);
-            lb_SelectDate.Margin = new Padding(6, 0, 6, 0);
+            lb_SelectDate.Location = new Point(27, 251);
+            lb_SelectDate.Margin = new Padding(4, 0, 4, 0);
             lb_SelectDate.Name = "lb_SelectDate";
-            lb_SelectDate.Size = new Size(229, 30);
+            lb_SelectDate.Size = new Size(144, 19);
             lb_SelectDate.TabIndex = 8;
             lb_SelectDate.Text = "選擇排班起始日期：";
             // 
             // tabDates
             // 
-            tabDates.Location = new Point(10, 44);
-            tabDates.Margin = new Padding(6, 6, 6, 6);
+            tabDates.Location = new Point(6, 28);
+            tabDates.Margin = new Padding(4, 4, 4, 4);
             tabDates.Name = "tabDates";
             tabDates.SelectedIndex = 0;
-            tabDates.Size = new Size(682, 548);
+            tabDates.Size = new Size(438, 347);
             tabDates.TabIndex = 9;
             // 
             // tabPage1
@@ -182,10 +182,10 @@
             // 
             // btn_InputHoliDayFile
             // 
-            btn_InputHoliDayFile.Location = new Point(938, 180);
-            btn_InputHoliDayFile.Margin = new Padding(6, 6, 6, 6);
+            btn_InputHoliDayFile.Location = new Point(603, 114);
+            btn_InputHoliDayFile.Margin = new Padding(4, 4, 4, 4);
             btn_InputHoliDayFile.Name = "btn_InputHoliDayFile";
-            btn_InputHoliDayFile.Size = new Size(148, 46);
+            btn_InputHoliDayFile.Size = new Size(95, 29);
             btn_InputHoliDayFile.TabIndex = 10;
             btn_InputHoliDayFile.Text = "選擇檔案";
             btn_InputHoliDayFile.UseVisualStyleBackColor = true;
@@ -193,10 +193,10 @@
             // 
             // btn_InputPersonFile
             // 
-            btn_InputPersonFile.Location = new Point(938, 318);
-            btn_InputPersonFile.Margin = new Padding(6, 6, 6, 6);
+            btn_InputPersonFile.Location = new Point(603, 201);
+            btn_InputPersonFile.Margin = new Padding(4, 4, 4, 4);
             btn_InputPersonFile.Name = "btn_InputPersonFile";
-            btn_InputPersonFile.Size = new Size(148, 46);
+            btn_InputPersonFile.Size = new Size(95, 29);
             btn_InputPersonFile.TabIndex = 11;
             btn_InputPersonFile.Text = "選擇檔案";
             btn_InputPersonFile.UseVisualStyleBackColor = true;
@@ -205,47 +205,46 @@
             // lb_SelectPerson
             // 
             lb_SelectPerson.AutoSize = true;
-            lb_SelectPerson.Location = new Point(750, 396);
-            lb_SelectPerson.Margin = new Padding(6, 0, 6, 0);
+            lb_SelectPerson.Location = new Point(482, 251);
+            lb_SelectPerson.Margin = new Padding(4, 0, 4, 0);
             lb_SelectPerson.Name = "lb_SelectPerson";
-            lb_SelectPerson.Size = new Size(229, 30);
+            lb_SelectPerson.Size = new Size(144, 19);
             lb_SelectPerson.TabIndex = 12;
             lb_SelectPerson.Text = "選擇排班起始人員：";
             // 
             // tb_SelectDateResult
             // 
-            tb_SelectDateResult.Location = new Point(266, 390);
-            tb_SelectDateResult.Margin = new Padding(6, 6, 6, 6);
+            tb_SelectDateResult.Location = new Point(171, 247);
+            tb_SelectDateResult.Margin = new Padding(4, 4, 4, 4);
             tb_SelectDateResult.Name = "tb_SelectDateResult";
-            tb_SelectDateResult.Size = new Size(460, 38);
+            tb_SelectDateResult.Size = new Size(297, 27);
             tb_SelectDateResult.TabIndex = 13;
             // 
             // tb_SelectPersonResult
             // 
-            tb_SelectPersonResult.Location = new Point(982, 390);
-            tb_SelectPersonResult.Margin = new Padding(6, 6, 6, 6);
+            tb_SelectPersonResult.Location = new Point(631, 247);
+            tb_SelectPersonResult.Margin = new Padding(4, 4, 4, 4);
             tb_SelectPersonResult.Name = "tb_SelectPersonResult";
-            tb_SelectPersonResult.Size = new Size(258, 38);
+            tb_SelectPersonResult.Size = new Size(167, 27);
             tb_SelectPersonResult.TabIndex = 14;
             // 
             // lv_person
             // 
             lv_person.FullRowSelect = true;
             lv_person.GridLines = true;
-            lv_person.Location = new Point(712, 44);
-            lv_person.Margin = new Padding(4, 4, 4, 4);
+            lv_person.Location = new Point(458, 28);
             lv_person.Name = "lv_person";
-            lv_person.Size = new Size(490, 544);
+            lv_person.Size = new Size(316, 346);
             lv_person.TabIndex = 15;
             lv_person.UseCompatibleStateImageBehavior = false;
             lv_person.View = View.Details;
             // 
             // btn_Duty
             // 
-            btn_Duty.Location = new Point(1098, 458);
-            btn_Duty.Margin = new Padding(6, 6, 6, 6);
+            btn_Duty.Location = new Point(706, 290);
+            btn_Duty.Margin = new Padding(4, 4, 4, 4);
             btn_Duty.Name = "btn_Duty";
-            btn_Duty.Size = new Size(148, 46);
+            btn_Duty.Size = new Size(95, 29);
             btn_Duty.TabIndex = 16;
             btn_Duty.Text = "執行排班";
             btn_Duty.UseVisualStyleBackColor = true;
@@ -254,10 +253,9 @@
             // chk_CounterFirst
             // 
             chk_CounterFirst.AutoSize = true;
-            chk_CounterFirst.Location = new Point(498, 322);
-            chk_CounterFirst.Margin = new Padding(4, 4, 4, 4);
+            chk_CounterFirst.Location = new Point(320, 204);
             chk_CounterFirst.Name = "chk_CounterFirst";
-            chk_CounterFirst.Size = new Size(189, 34);
+            chk_CounterFirst.Size = new Size(121, 23);
             chk_CounterFirst.TabIndex = 17;
             chk_CounterFirst.Text = "櫃臺人員優先";
             chk_CounterFirst.UseVisualStyleBackColor = true;
@@ -265,10 +263,9 @@
             // chk_ShowHoliDay
             // 
             chk_ShowHoliDay.AutoSize = true;
-            chk_ShowHoliDay.Location = new Point(702, 322);
-            chk_ShowHoliDay.Margin = new Padding(4, 4, 4, 4);
+            chk_ShowHoliDay.Location = new Point(451, 204);
             chk_ShowHoliDay.Name = "chk_ShowHoliDay";
-            chk_ShowHoliDay.Size = new Size(141, 34);
+            chk_ShowHoliDay.Size = new Size(91, 23);
             chk_ShowHoliDay.TabIndex = 18;
             chk_ShowHoliDay.Text = "顯示假日";
             chk_ShowHoliDay.UseVisualStyleBackColor = true;
@@ -276,10 +273,10 @@
             // 
             // btn_ExportDutyResult
             // 
-            btn_ExportDutyResult.Location = new Point(1098, 1156);
-            btn_ExportDutyResult.Margin = new Padding(6, 6, 6, 6);
+            btn_ExportDutyResult.Location = new Point(706, 732);
+            btn_ExportDutyResult.Margin = new Padding(4, 4, 4, 4);
             btn_ExportDutyResult.Name = "btn_ExportDutyResult";
-            btn_ExportDutyResult.Size = new Size(148, 46);
+            btn_ExportDutyResult.Size = new Size(95, 29);
             btn_ExportDutyResult.TabIndex = 19;
             btn_ExportDutyResult.Text = "匯出";
             btn_ExportDutyResult.UseVisualStyleBackColor = true;
@@ -289,10 +286,9 @@
             // lL_SchedulePage
             // 
             lL_SchedulePage.AutoSize = true;
-            lL_SchedulePage.Location = new Point(266, 188);
-            lL_SchedulePage.Margin = new Padding(4, 0, 4, 0);
+            lL_SchedulePage.Location = new Point(171, 119);
             lL_SchedulePage.Name = "lL_SchedulePage";
-            lL_SchedulePage.Size = new Size(640, 30);
+            lL_SchedulePage.Size = new Size(400, 19);
             lL_SchedulePage.TabIndex = 20;
             lL_SchedulePage.TabStop = true;
             lL_SchedulePage.Text = "下載行事曆(政府資料開放平臺)，勿下載Google行事曆專用";
@@ -300,10 +296,10 @@
             // 
             // btn_SaveSetting
             // 
-            btn_SaveSetting.Location = new Point(172, 30);
-            btn_SaveSetting.Margin = new Padding(6, 6, 6, 6);
+            btn_SaveSetting.Location = new Point(111, 19);
+            btn_SaveSetting.Margin = new Padding(4, 4, 4, 4);
             btn_SaveSetting.Name = "btn_SaveSetting";
-            btn_SaveSetting.Size = new Size(148, 46);
+            btn_SaveSetting.Size = new Size(95, 29);
             btn_SaveSetting.TabIndex = 21;
             btn_SaveSetting.Text = "儲存設定";
             btn_SaveSetting.UseVisualStyleBackColor = true;
@@ -311,10 +307,10 @@
             // 
             // btn_ClearSetting
             // 
-            btn_ClearSetting.Location = new Point(12, 32);
-            btn_ClearSetting.Margin = new Padding(6, 6, 6, 6);
+            btn_ClearSetting.Location = new Point(8, 20);
+            btn_ClearSetting.Margin = new Padding(4, 4, 4, 4);
             btn_ClearSetting.Name = "btn_ClearSetting";
-            btn_ClearSetting.Size = new Size(148, 46);
+            btn_ClearSetting.Size = new Size(95, 29);
             btn_ClearSetting.TabIndex = 22;
             btn_ClearSetting.Text = "清除設定";
             btn_ClearSetting.UseVisualStyleBackColor = true;
@@ -322,10 +318,9 @@
             // 
             // btn_Clear
             // 
-            btn_Clear.Location = new Point(1098, 48);
-            btn_Clear.Margin = new Padding(4, 4, 4, 4);
+            btn_Clear.Location = new Point(706, 30);
             btn_Clear.Name = "btn_Clear";
-            btn_Clear.Size = new Size(148, 46);
+            btn_Clear.Size = new Size(95, 29);
             btn_Clear.TabIndex = 23;
             btn_Clear.Text = "清空";
             btn_Clear.UseVisualStyleBackColor = true;
@@ -333,10 +328,9 @@
             // 
             // btn_OpenTakeLeaveSettingForm
             // 
-            btn_OpenTakeLeaveSettingForm.Location = new Point(900, 1156);
-            btn_OpenTakeLeaveSettingForm.Margin = new Padding(4, 4, 4, 4);
+            btn_OpenTakeLeaveSettingForm.Location = new Point(579, 732);
             btn_OpenTakeLeaveSettingForm.Name = "btn_OpenTakeLeaveSettingForm";
-            btn_OpenTakeLeaveSettingForm.Size = new Size(186, 46);
+            btn_OpenTakeLeaveSettingForm.Size = new Size(120, 29);
             btn_OpenTakeLeaveSettingForm.TabIndex = 24;
             btn_OpenTakeLeaveSettingForm.Text = "請假表設定";
             btn_OpenTakeLeaveSettingForm.UseVisualStyleBackColor = true;
@@ -346,11 +340,9 @@
             // 
             gb_PreView.Controls.Add(tabDates);
             gb_PreView.Controls.Add(lv_person);
-            gb_PreView.Location = new Point(40, 504);
-            gb_PreView.Margin = new Padding(4, 4, 4, 4);
+            gb_PreView.Location = new Point(26, 319);
             gb_PreView.Name = "gb_PreView";
-            gb_PreView.Padding = new Padding(4, 4, 4, 4);
-            gb_PreView.Size = new Size(1226, 600);
+            gb_PreView.Size = new Size(788, 380);
             gb_PreView.TabIndex = 25;
             gb_PreView.TabStop = false;
             gb_PreView.Text = "排班預覽";
@@ -359,11 +351,11 @@
             // 
             gb_FormSettings.Controls.Add(btn_ClearSetting);
             gb_FormSettings.Controls.Add(btn_SaveSetting);
-            gb_FormSettings.Location = new Point(26, 16);
-            gb_FormSettings.Margin = new Padding(6, 6, 6, 6);
+            gb_FormSettings.Location = new Point(17, 10);
+            gb_FormSettings.Margin = new Padding(4, 4, 4, 4);
             gb_FormSettings.Name = "gb_FormSettings";
-            gb_FormSettings.Padding = new Padding(6, 6, 6, 6);
-            gb_FormSettings.Size = new Size(346, 90);
+            gb_FormSettings.Padding = new Padding(4, 4, 4, 4);
+            gb_FormSettings.Size = new Size(222, 57);
             gb_FormSettings.TabIndex = 26;
             gb_FormSettings.TabStop = false;
             gb_FormSettings.Text = "設定";
@@ -371,10 +363,10 @@
             // chk_ExportDuty
             // 
             chk_ExportDuty.AutoSize = true;
-            chk_ExportDuty.Location = new Point(10, 36);
-            chk_ExportDuty.Margin = new Padding(6, 6, 6, 6);
+            chk_ExportDuty.Location = new Point(6, 23);
+            chk_ExportDuty.Margin = new Padding(4, 4, 4, 4);
             chk_ExportDuty.Name = "chk_ExportDuty";
-            chk_ExportDuty.Size = new Size(261, 34);
+            chk_ExportDuty.Size = new Size(166, 23);
             chk_ExportDuty.TabIndex = 27;
             chk_ExportDuty.Text = "一樓櫃台中午值班表";
             chk_ExportDuty.UseVisualStyleBackColor = true;
@@ -383,10 +375,10 @@
             // chk_ExportTakeLeave
             // 
             chk_ExportTakeLeave.AutoSize = true;
-            chk_ExportTakeLeave.Location = new Point(280, 36);
-            chk_ExportTakeLeave.Margin = new Padding(6, 6, 6, 6);
+            chk_ExportTakeLeave.Location = new Point(180, 23);
+            chk_ExportTakeLeave.Margin = new Padding(4, 4, 4, 4);
             chk_ExportTakeLeave.Name = "chk_ExportTakeLeave";
-            chk_ExportTakeLeave.Size = new Size(189, 34);
+            chk_ExportTakeLeave.Size = new Size(121, 23);
             chk_ExportTakeLeave.TabIndex = 28;
             chk_ExportTakeLeave.Text = "科員請假紀錄";
             chk_ExportTakeLeave.UseVisualStyleBackColor = true;
@@ -396,20 +388,20 @@
             // 
             gb_ExportFileCheckArea.Controls.Add(chk_ExportDuty);
             gb_ExportFileCheckArea.Controls.Add(chk_ExportTakeLeave);
-            gb_ExportFileCheckArea.Location = new Point(50, 1126);
-            gb_ExportFileCheckArea.Margin = new Padding(6, 6, 6, 6);
+            gb_ExportFileCheckArea.Location = new Point(32, 713);
+            gb_ExportFileCheckArea.Margin = new Padding(4, 4, 4, 4);
             gb_ExportFileCheckArea.Name = "gb_ExportFileCheckArea";
-            gb_ExportFileCheckArea.Padding = new Padding(6, 6, 6, 6);
-            gb_ExportFileCheckArea.Size = new Size(488, 84);
+            gb_ExportFileCheckArea.Padding = new Padding(4, 4, 4, 4);
+            gb_ExportFileCheckArea.Size = new Size(314, 53);
             gb_ExportFileCheckArea.TabIndex = 29;
             gb_ExportFileCheckArea.TabStop = false;
             gb_ExportFileCheckArea.Text = "選擇匯出檔案";
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(14F, 30F);
+            AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1268, 1220);
+            ClientSize = new Size(815, 773);
             Controls.Add(btn_Duty);
             Controls.Add(gb_ExportFileCheckArea);
             Controls.Add(gb_FormSettings);
@@ -434,7 +426,7 @@
             Controls.Add(tb_InputHoliDay);
             Controls.Add(lb_InputHoliDay);
             Controls.Add(gb_PreView);
-            Margin = new Padding(6, 6, 6, 6);
+            Margin = new Padding(4, 4, 4, 4);
             Name = "Form1";
             Text = "櫃檯排班小工具";
             Load += Form1_Load;

@@ -7,15 +7,15 @@ namespace OnDuty
 {
     public partial class Form1 : Form
     {
-        private List<ScheduleDate> scheduleDates = new List<ScheduleDate>();
-        private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>();
-        private List<ScheduleDate> currentScheduleDates = new();
-        private bool isDebug = false;
-        private bool isDuty = false;
-        private List<string> persons = new List<string>();
-        private Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>();
-        private string selectResult = "";
-        private string year = "";
+        private List<ScheduleDate> scheduleDates = new List<ScheduleDate>(); // 行事曆
+        private List<ScheduleDate> scheduleNoHoliDayDates = new List<ScheduleDate>(); // 行事曆包含假日
+        private List<ScheduleDate> currentScheduleDates = new(); // 執行排班後的行事曆
+        private bool isDebug = false; // debug模式
+        private bool isDuty = false; // 是否已執行排班
+        private List<string> persons = new List<string>(); // 人員list
+        private Dictionary<string, List<ScheduleDate>> dicMonthAndScheduleDates = new Dictionary<string, List<ScheduleDate>>(); // 排班後的行事曆依月份分類
+        private string selectResult = ""; // 選擇的日期
+        private string year = ""; // 年份
         public Form1()
         {
             InitializeComponent();
@@ -318,7 +318,7 @@ namespace OnDuty
 
 
             CreateDuty(persons ?? []);
-            SaveSetting();
+            
             tb_SelectDateResult.Text = "";
             tb_SelectPersonResult.Text = "";
             selectResult = "";
@@ -382,7 +382,11 @@ namespace OnDuty
             if (!check)
                 MessageBox.Show("請至少選擇一個要輸出的檔案");
             else
+            {
                 MessageBox.Show(message);
+                SaveSetting();
+            }
+                
         }
 
         private string ExportDutyResult()
@@ -544,26 +548,29 @@ namespace OnDuty
                             worksheet.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                             worksheet.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                             worksheet.Style.Font.FontSize = 14;
+                            
 
                             //標題
                             worksheet.Cell(1, 1).Value = "日期";
                             worksheet.Cell(1, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                            worksheet.Cell(1, 1).Style.Fill.BackgroundColor = XLColor.LightCyan;
                             worksheet.Column(1).Width = 10;
-                            worksheet.Cell(1, 2).Value = "星期/假期";
+                            worksheet.Cell(1, 2).Value = "星期";
                             worksheet.Cell(1, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                            worksheet.Cell(1, 2).Style.Fill.BackgroundColor = XLColor.LightCyan;
                             worksheet.Column(2).Width = 14;
 
                             int index = 1;
                             for (int i = 1; i <= columns * 2; i++)
                             {
-                                worksheet.Cell(1, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                                 if (i % 2 == 1)
                                 {
+                                    worksheet.Column(i + 2).Width = 18; //每個請假格寬度
                                     worksheet.Cell(1, i + 2).Value = index;
                                     var indexTitleRange = worksheet.Range(1, i + 2, 1, i + 3);
                                     indexTitleRange.Merge();
                                     indexTitleRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
-                                    worksheet.Column(i + 2).Width = 15; //每個請假格寬度
+                                    indexTitleRange.Style.Fill.BackgroundColor = XLColor.LightCyan;
                                     index++;
                                 }
                             }
@@ -577,7 +584,9 @@ namespace OnDuty
                                 worksheet.Cell(row, 2).Value = scheduleDate.week;
                                 worksheet.Cell(row, 2).Style.Font.FontSize = 16;
                                 worksheet.Cell(row, 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                worksheet.Cell(row, 1).Style.Fill.BackgroundColor = XLColor.LightYellow;
                                 worksheet.Cell(row, 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                                worksheet.Cell(row, 2).Style.Fill.BackgroundColor = XLColor.LightYellow;
                                 for (int i = 1; i <= columns * 2; i++)
                                 {
                                     worksheet.Cell(row, i + 2).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
@@ -596,6 +605,7 @@ namespace OnDuty
                                             worksheet.Cell(row, i).Style.Fill.BackgroundColor = XLColor.LightGray;
                                         }
                                         worksheet.Range(row, 3, row, 2 + (columns * 2)).Merge();
+                                        worksheet.Range(row, 3, row, 2 + (columns * 2)).Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
                                     }
                                 }
                                 else
@@ -780,13 +790,7 @@ namespace OnDuty
 
             if (result == DialogResult.Yes)
             {
-                tb_InputHoliDay.Text = "";
-                tb_InputPerson.Text = "";
-                tb_CounterName.Text = "";
-                chk_ExportDuty.Checked = false;
-                chk_ExportTakeLeave.Checked = false;
-                chk_CounterFirst.Checked = false;
-                chk_ShowHoliDay.Checked = false;
+                ClearAllField();
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.Save();
                 MessageBox.Show("設定已清除");
@@ -812,17 +816,23 @@ namespace OnDuty
             this.currentScheduleDates = new();
             this.persons = new List<string>();
             this.isDuty = false;
+            tabDates.TabPages.Clear();
+            lv_person.Items.Clear();
+            lv_person.Columns.Clear();
+            ClearAllField();
+            btn_ExportDutyResult.Visible = false;
+        }
+        private void ClearAllField()
+        {
             tb_CounterName.Text = "";
             tb_InputHoliDay.Text = "";
             tb_InputPerson.Text = "";
             tb_SelectDateResult.Text = "";
             tb_SelectPersonResult.Text = "";
-            tabDates.TabPages.Clear();
-            lv_person.Items.Clear();
-            lv_person.Columns.Clear();
-            btn_ExportDutyResult.Visible = false;
             chk_ExportDuty.Checked = false;
             chk_ExportTakeLeave.Checked = false;
+            chk_CounterFirst.Checked = false;
+            chk_ShowHoliDay.Checked = false;
         }
 
         private void chk_ExportTakeLeave_CheckedChanged(object sender, EventArgs e)
@@ -854,9 +864,7 @@ namespace OnDuty
             {
                 if (chk_ExportDuty.Checked)
                     MessageBox.Show("請先執行排班");
-                
             }
-                
         }
     }
 }
